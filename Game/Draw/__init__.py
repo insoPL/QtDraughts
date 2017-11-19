@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from PyQt5.QtGui import QPainter, QBrush
 from PyQt5.QtCore import Qt
+from .piece import Piece
 import logging
 
 
@@ -9,6 +10,7 @@ class Draw:
         logging.debug("init Draw")
         self.screen = screen
         self.margines = 30
+        self.redraw()
         logging.debug("init Draw complete")
 
     @property
@@ -43,4 +45,4 @@ class Draw:
 
     def redraw(self):
         self.draw_board()
-
+        self.piece = Piece(self.screen)
