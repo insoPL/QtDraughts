@@ -6,14 +6,17 @@ from PyQt5.QtGui import QIcon
 import logging
 from Game import Game
 
+
 class Main(QMainWindow):
     def __init__(self):
         super().__init__()
 
         logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
         logging.debug("Initialization...")
-        self.game = Game(self)
         self.init_ui()
+        self.game = Game(self)
+        self.show()
+
         logging.info("Initialization complete")
 
     def init_toolbar(self):
@@ -40,14 +43,11 @@ class Main(QMainWindow):
     def init_ui(self):
         self.setMinimumSize(500,525)
         self.setWindowTitle('Draughts')
-
         self.init_toolbar()
-
-        self.show()
 
     def paintEvent(self, e):
         logging.debug("PaintEvent")
-        self.game.updateDrawing()
+        self.game.update_drawing()
 
 
 if __name__ == '__main__':
