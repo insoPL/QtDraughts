@@ -41,7 +41,7 @@ class Main(QMainWindow):
         self.toolbar.addAction(exit_act)
 
     def init_ui(self):
-        self.setMinimumSize(500,525)
+        self.setMinimumSize(300,300)
         self.setWindowTitle('Draughts')
         self.init_toolbar()
 

@@ -6,7 +6,8 @@ from .piece import Piece
 class Board:
     def __init__(self, screen):
         self.drawnBoard = DrawBoard(screen)
-        self.piece = Piece(screen, self.size_of_one_tile)
+        self.piece = Piece(screen, self.size_of_one_tile, self.drawnBoard.anchor_point)
+        self.piece.move(2 ,3)
 
     def redraw(self):
         self.drawnBoard.draw_board()

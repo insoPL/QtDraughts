@@ -6,26 +6,33 @@ import logging
 
 class DrawBoard:
     def __init__(self,screen):
+        self.toolbar_margines = 35
         logging.debug("init Draw")
         self.screen = screen
-        self.margines = 30
-        self.redraw()
+        self.draw_board()
         logging.debug("init Draw complete")
 
     @property
     def size_of_one_tile(self):
-        height = self.screen.height()
-        width = self.screen.width()
+        height = self.screen.height()-10
+        width = self.screen.width()-self.toolbar_margines-10
         height -= 25  # correction for toolbar
         if height < width:
-            height = height - self.margines*2
+            height = height
             return height/8
         else:
-            width = width - self.margines*2
+            width = width
             return width/8
+
+    @property
+    def anchor_point(self):
+        x = (self.screen.width() / 2) - (4 * self.size_of_one_tile)
+        y = ((self.screen.height()-self.toolbar_margines)/2)-(4*self.size_of_one_tile)
+        return x, y
 
     def draw_board(self):
         tile_size = self.size_of_one_tile
+        width_margines, height_margines = self.anchor_point
         qp = QPainter()
         qp.begin(self.screen)
         color = False
@@ -37,10 +44,9 @@ class DrawBoard:
                     qp.setBrush(Qt.transparent)
                 color = not color
                 qp.setPen(Qt.black)
-                qp.drawRect(self.margines + bar * tile_size, self.margines + foo * tile_size + 25, tile_size,
+                qp.drawRect(width_margines + bar * tile_size,
+                            self.toolbar_margines + height_margines + foo * tile_size,
+                            tile_size,
                             tile_size)
             color = not color
         qp.end()
-
-    def redraw(self):
-        self.draw_board()
