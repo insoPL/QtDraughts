@@ -7,11 +7,10 @@ from .pieces import Pieces
 
 class Game:
     def __init__(self,screen):
-        logging.debug("init Game...")
-        self.draw = Board(screen)
-        logging.debug("init Game complete")
+        logging.info("Game constructor")
+        self.board = Board(screen)
 
     def update_drawing(self):
-        self.draw.redraw()
+        self.board.redraw()
 
 

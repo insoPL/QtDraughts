@@ -13,8 +13,8 @@ class Board:
     def redraw(self):
         self.drawnBoard.draw_board()
 
-    def pos_to_cords(self, pos): #  changes absolute pixel position on screen to on board cords
-        return pos
+    def global_pos_to_cords(self, pos):
+        return self.drawnBoard.global_pos_to_cords(pos)
 
     @property
     def size_of_one_tile(self):

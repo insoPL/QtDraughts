@@ -19,20 +19,32 @@ class DrawBoard:
         height -= 25  # correction for toolbar
         if height < width:
             height = height
-            return height/8
+            return round(height/8)
         else:
             width = width
-            return width/8
+            return round(width/8)
 
     @property
-    def anchor_point(self):
-        x = (self.screen.width() / 2) - (4 * self.size_of_one_tile)
-        y = ((self.screen.height()-self.toolbar_margines)/2)-(4*self.size_of_one_tile)
-        return x, y
+    def height_margines(self):
+        return ((self.screen.height()-self.toolbar_margines)/2)-(4*self.size_of_one_tile)
+
+    @property
+    def width_margines(self):
+        return (self.screen.width() / 2) - (4 * self.size_of_one_tile)
+
+    def global_pos_to_cords(self, global_pos):
+        pos = self.screen.mapFromGlobal(global_pos)
+        x = pos.x()
+        y = pos.y()
+        x -= self.width_margines
+        x /= self.size_of_one_tile
+        y -= self.height_margines
+        y -= self.toolbar_margines
+        y /= self.size_of_one_tile
+        return int(x), int(y)
 
     def draw_board(self):
         tile_size = self.size_of_one_tile
-        width_margines, height_margines = self.anchor_point
         qp = QPainter()
         qp.begin(self.screen)
         color = False
@@ -44,8 +56,8 @@ class DrawBoard:
                     qp.setBrush(Qt.transparent)
                 color = not color
                 qp.setPen(Qt.black)
-                qp.drawRect(width_margines + bar * tile_size,
-                            self.toolbar_margines + height_margines + foo * tile_size,
+                qp.drawRect(self.width_margines + bar * tile_size,
+                            self.toolbar_margines + self.height_margines + foo * tile_size,
                             tile_size,
                             tile_size)
             color = not color
