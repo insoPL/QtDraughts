@@ -6,11 +6,11 @@ import logging
 
 class DrawBoard:
     def __init__(self,screen):
-        self.toolbar_margines = 35
         logging.debug("init Draw")
+        self.toolbar_margines = 35
         self.screen = screen
         self.draw_board()
-        logging.debug("init Draw complete")
+        logging.debug("init DrawBoard complete")
 
     @property
     def size_of_one_tile(self):

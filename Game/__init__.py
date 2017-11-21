@@ -2,7 +2,7 @@
 import logging
 
 from .board import Board
-from .piece import Piece
+from .pieces import Pieces
 
 
 class Game:

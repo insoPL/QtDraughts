@@ -11,8 +11,8 @@ class Main(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
-        logging.debug("Initialization...")
+        logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
+        logging.info("Initialization...")
         self.init_ui()
         self.game = Game(self)
         self.show()

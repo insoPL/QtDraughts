@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import logging
 
 class Color:
     black = 0
@@ -22,4 +22,3 @@ class Color:
             return Color.white
         else:
             raise ValueError(str(color))
-

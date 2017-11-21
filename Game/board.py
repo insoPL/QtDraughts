@@ -1,17 +1,20 @@
 # -*- coding: utf-8 -*-
 from .Draw.drawBoard import DrawBoard
-from .piece import Piece
+from .pieces import Pieces
+import logging
 
 
 class Board:
     def __init__(self, screen):
+        logging.info("Board constructor")
         self.drawnBoard = DrawBoard(screen)
-        self.piece = Piece(screen, self.size_of_one_tile, self.drawnBoard.anchor_point)
-        self.piece.move(2 ,3)
+        self.piece = Pieces(self)
 
     def redraw(self):
         self.drawnBoard.draw_board()
-        self.piece.setSize(self.size_of_one_tile)
+
+    def pos_to_cords(self, pos): #  changes absolute pixel position on screen to on board cords
+        return pos
 
     @property
     def size_of_one_tile(self):

@@ -8,10 +8,14 @@ from PyQt5.QtGui import QPainter
 
 
 class DrawPiece(QFrame):
-    def __init__(self, screen, size_of_one_tile):
-        logging.debug("Piece Constructor at" + str(size_of_one_tile))
-        self.size_of_piece = size_of_one_tile
-        QFrame.__init__(self, screen)
+    def __init__(self, board, cords, color):
+        logging.info("Piece Constructor at " + str(cords))
+        self.board = board
+        QFrame.__init__(self, board.drawnBoard.screen)
+
+    @property
+    def size_of_piece(self):
+        return self.board.size_of_one_tile
 
     def paintEvent(self, e):
         logging.debug("PaintEvent inside piece")
@@ -26,10 +30,10 @@ class DrawPiece(QFrame):
         qp.end()
 
     def mousePressEvent(self, e):
+        logging.info("you clicked "+str(self.board.pos_to_cords(e.pos())))
         self.offset = e.pos()
 
     def mouseMoveEvent(self, e):
         self.move(self.mapToParent(e.pos()-self.offset))
 
-    def setSize(self, new_size):
-        self.size_of_piece = new_size-5
+
