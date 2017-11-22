@@ -43,6 +43,12 @@ class DrawBoard:
         y /= self.size_of_one_tile
         return int(x), int(y)
 
+    def cords_to_pos(self, cords):
+        x, y = cords
+        x = self.width_margines + x * self.size_of_one_tile
+        y = self.toolbar_margines + self.height_margines + y * self.size_of_one_tile
+        return x, y
+
     def draw_board(self):
         tile_size = self.size_of_one_tile
         qp = QPainter()
@@ -56,9 +62,6 @@ class DrawBoard:
                     qp.setBrush(Qt.transparent)
                 color = not color
                 qp.setPen(Qt.black)
-                qp.drawRect(self.width_margines + bar * tile_size,
-                            self.toolbar_margines + self.height_margines + foo * tile_size,
-                            tile_size,
-                            tile_size)
+                qp.drawRect(*self.cords_to_pos((foo, bar)), tile_size, tile_size)
             color = not color
         qp.end()

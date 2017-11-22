@@ -8,11 +8,16 @@ from PyQt5.QtGui import QPainter
 
 
 class DrawPiece(QFrame):
-    @constructor_logging
     def __init__(self, board, cords, color):
         logging.info("Piece Constructor at " + str(cords))
         self.board = board
+        self.cords = cords
         QFrame.__init__(self, board.drawnBoard.screen)
+
+
+  #  def move(self, cords):
+   #     global_pos = self.board.drawnBoard.cords_to_global_pos(cords)
+    #self.QFrame.move(pos)
 
     @property
     def size_of_piece(self):
@@ -29,6 +34,8 @@ class DrawPiece(QFrame):
         qp.setPen(pen)
         qp.drawEllipse(5, 5, self.size_of_piece-10,self.size_of_piece-10)
         qp.end()
+        to = self.board.drawnBoard.cords_to_pos(self.cords)
+        self.move(*to)
 
     def mousePressEvent(self, e):
         self.offset = e.pos()
