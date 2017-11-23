@@ -32,8 +32,7 @@ class DrawBoard:
     def width_margines(self):
         return (self.screen.width() / 2) - (4 * self.size_of_one_tile)
 
-    def global_pos_to_cords(self, global_pos):
-        pos = self.screen.mapFromGlobal(global_pos)
+    def pos_to_cords(self, pos):
         x = pos.x()
         y = pos.y()
         x -= self.width_margines
@@ -48,6 +47,9 @@ class DrawBoard:
         x = self.width_margines + x * self.size_of_one_tile
         y = self.toolbar_margines + self.height_margines + y * self.size_of_one_tile
         return x, y
+
+    def mapFromGlobal(self, glob_pos):
+        return self.screen.mapFromGlobal(glob_pos)
 
     def draw_board(self):
         tile_size = self.size_of_one_tile

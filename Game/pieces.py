@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-from .Draw.drawPiece import DrawPiece
-from tools import *
 import logging
+
+from Game.drawPiece import DrawPiece
+from tools import *
 
 
 class Pieces:

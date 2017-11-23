@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-from .Draw.drawBoard import DrawBoard
-from .pieces import Pieces
 import logging
+
+from Game.drawBoard import DrawBoard
+from .pieces import Pieces
 
 
 class Board:
@@ -13,11 +14,12 @@ class Board:
     def redraw(self):
         self.drawnBoard.draw_board()
 
-    def global_pos_to_cords(self, pos):
-        return self.drawnBoard.global_pos_to_cords(pos)
+    def global_pos_to_cords(self, global_pos):
+        pos = self.drawnBoard.mapFromGlobal(global_pos)
+        return self.drawnBoard.pos_to_cords(pos)
 
     def cords_to_pos(self, cords):
-        return self.drawnBoard.global_pos_to_cords(cords)
+        return self.drawnBoard.cords_to_pos(cords)
 
     @property
     def size_of_one_tile(self):
