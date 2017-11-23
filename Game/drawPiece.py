@@ -14,7 +14,7 @@ class DrawPiece(QFrame):
         self.board = board
         self.cords = cords
         self.color = color
-        QFrame.__init__(self, board.drawnBoard.screen)
+        QFrame.__init__(self, board.screen)
         self.dragging = False
 
     @property
@@ -22,7 +22,7 @@ class DrawPiece(QFrame):
         return self.board.size_of_one_tile
 
     def paintEvent(self, e):
-        logging.debug("PaintEvent inside piece")
+        logging.debug("PaintEvent inside pieces")
         self.resize(self.size_of_piece, self.size_of_piece)
         pen = QPen()
         pen.setWidth(4)
@@ -42,9 +42,11 @@ class DrawPiece(QFrame):
 
     def mouseReleaseEvent(self, e):
         self.dragging = False
-        dest_cords = self.board.global_pos_to_cords(e.globalPos())
-        logging.info("Trying to place "+str(self.cords)+" piece on "+str(dest_cords))
-        mrib = mozliwe_ruchy_i_bicia(self.cords, self.color, *self.board.piece.two_lists)
+        glob_pos = e.globalPos()
+        pos = self.board.mapFromGlobal(glob_pos)
+        dest_cords = self.board.pos_to_cords(pos)
+        logging.info("Trying to place "+str(self.cords)+" pieces on "+str(dest_cords))
+        mrib = mozliwe_ruchy_i_bicia(self.cords, self.color, *self.board.pieces.two_lists)
         for foo in mrib.keys():
             if foo == dest_cords:
                 self.paintEvent(None)
