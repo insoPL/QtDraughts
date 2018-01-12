@@ -5,7 +5,6 @@ from PyQt5.QtWidgets import QFrame
 from PyQt5.QtCore import *
 import logging
 from PyQt5.QtGui import QPainter
-from .game_logic import mozliwe_ruchy_i_bicia
 
 
 class DrawPiece(QFrame):
@@ -26,6 +25,8 @@ class DrawPiece(QFrame):
         self.resize(self.size_of_piece, self.size_of_piece)
         pen = QPen()
         pen.setWidth(4)
+        if self.color == Color.white:
+            pen.setColor(Qt.lightGray)
         qp = QPainter()
         qp.setRenderHint(QPainter.HighQualityAntialiasing)
         qp.begin(self)
@@ -46,14 +47,10 @@ class DrawPiece(QFrame):
         pos = self.board.mapFromGlobal(glob_pos)
         dest_cords = self.board.pos_to_cords(pos)
         logging.info("Trying to place "+str(self.cords)+" pieces on "+str(dest_cords))
-        mrib = mozliwe_ruchy_i_bicia(self.cords, self.color, *self.board.pieces.two_lists)
-        for foo in mrib.keys():
-            if foo == dest_cords:
-                self.paintEvent(None)
-                self.cords = dest_cords
-                if mrib[foo] != 0:
-                    logging.info("bij")
         self.paintEvent(None)
 
     def mouseMoveEvent(self, e):
         self.move(self.mapToParent(e.pos()-self.offset))
+
+    def __reduce__(self):
+        QFrame.__reduce__()

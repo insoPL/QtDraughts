@@ -11,7 +11,6 @@ class Board:
         self.toolbar_margines = 35
         self.screen = screen
         self.redraw()
-        self.pieces = Pieces(self)
 
     @property
     def size_of_one_tile(self):
