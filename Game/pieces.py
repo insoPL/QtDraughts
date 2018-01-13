@@ -6,9 +6,9 @@ from tools import *
 
 
 class Pieces:
-    def __init__(self, board):
+    def __init__(self, game):
         logging.info("Pieces constructor")
-        self.board = board
+        self.game = game
         self._pieces_list = list()
         for foo in range(0, 8, 2):
             self.add_piece((foo+1, 7), Color.black)
@@ -20,11 +20,13 @@ class Pieces:
             self.add_piece((foo, 0), Color.white)
 
     def add_piece(self, cords, color):
-        self._pieces_list.append(DrawPiece(self.board, cords, color))
+        self._pieces_list.append(DrawPiece(self.game, cords, color))
 
     def remove_piece(self, cords):
         piece = self.get_piece(cords)
         self._pieces_list.remove(piece)
+        piece.setParent(None)
+        piece.destroy()
         del piece
 
     def get_piece(self, cords):  # --> Piece
