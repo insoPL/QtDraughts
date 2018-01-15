@@ -15,7 +15,7 @@ class Color:
             raise ValueError(str(color))
 
     @staticmethod
-    def przeciwny(color):
+    def opposite(color):
         if color == Color.white:
             return Color.black
         elif color == Color.black:

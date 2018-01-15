@@ -19,6 +19,9 @@ class Pieces:
             self.add_piece((foo+1, 1), Color.white)
             self.add_piece((foo, 0), Color.white)
 
+    def __iter__(self):
+        return self._pieces_list.__iter__()
+
     def add_piece(self, cords, color):
         self._pieces_list.append(DrawPiece(self.game, cords, color))
 
