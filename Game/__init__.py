@@ -3,9 +3,10 @@ import logging
 
 from .board import Board
 from .pieces import Pieces
-from .game_logic import mozliwe_ruchy_i_bicia
 from tools import Color
 from .settings import Settings
+import Game.game_logic
+
 
 class Game:
     def __init__(self, screen):
@@ -19,26 +20,29 @@ class Game:
     def try_to_make_a_move(self, piece, dest_cords):
         if piece.color == self.whoseTurn:
             if self.can_i_attack():
-                possible_attacks = game_logic.mozliwe_bicia(piece.cords, piece.color, *self.pieces.two_lists)
+                possible_attacks = game_logic.possible_attacks(piece.cords, *self.pieces.two_lists)
                 for possible_dest_cord, possible_destroyed_piece in possible_attacks.items():
                     if possible_dest_cord == dest_cords:
                         self.pieces.remove_piece(possible_destroyed_piece)
                         piece.cords = dest_cords
-                        self.whoseTurn = Color.opposite(self.whoseTurn)
+                        self.end_turn()
+                        return
                 if self.settings.force_attack:
                     return
-            mrib = game_logic.mozliwe_ruchy(piece.cords, piece.color, *self.pieces.two_lists)
-            for foo in mrib.keys():
+
+            possible_moves = game_logic.possible_moves(piece.cords, *self.pieces.two_lists)
+            for foo in possible_moves.keys():
                 if foo == dest_cords:
                     piece.cords = dest_cords
-                    if mrib[foo] != 0:
-                        self.pieces.remove_piece(mrib[foo])
-                    self.whoseTurn = Color.opposite(self.whoseTurn)
+                    self.end_turn()
+
+    def end_turn(self):
+        self.whoseTurn = Color.opposite(self.whoseTurn)
 
     def can_i_attack(self):
         for piece in self.pieces:
             if piece.color == self.whoseTurn:
-                possible_attacks = game_logic.mozliwe_bicia(piece.cords, piece.color, *self.pieces.two_lists)
+                possible_attacks = game_logic.possible_attacks(piece.cords, *self.pieces.two_lists)
                 for attack in possible_attacks.values():
                     return True
         return False

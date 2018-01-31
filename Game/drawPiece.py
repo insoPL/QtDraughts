@@ -9,7 +9,7 @@ from PyQt5.QtGui import QPainter
 
 class DrawPiece(QFrame):
     def __init__(self, game, cords, color):
-        logging.info("Piece Constructor at " + str(cords))
+        logging.info("Piece %s Constructor at %s", str(color), str(cords))
         self.game = game
         self.board = game.board
         self.cords = cords
@@ -47,7 +47,7 @@ class DrawPiece(QFrame):
         glob_pos = e.globalPos()
         pos = self.board.mapFromGlobal(glob_pos)
         dest_cords = self.board.pos_to_cords(pos)
-        logging.debug("Trying to place "+str(self.cords)+" pieces on "+str(dest_cords))
+        logging.info("Trying to place "+str(self.cords)+" pieces on "+str(dest_cords))
         self.game.try_to_make_a_move(self, dest_cords)
         self.paintEvent(None)
 

@@ -1,46 +1,41 @@
 # -*- coding: utf-8 -*-
-from tools import *
 
 
-def mozliwe_ruchy_i_bicia(cords, color, biale, czarne):  # zwraca słownik dict[docelowy_cord] = zbity_pion
-    return_dict = mozliwe_ruchy(cords, color, biale, czarne)
-    return_dict.update(mozliwe_bicia(cords, color, biale, czarne))
+def mozliwe_ruchy_i_bicia(cords, color, cord_list_of_bottom_pieces, cord_list_of_top_pieces):  # zwraca słownik dict[docelowy_cord] = zbity_pion
+    return_dict = possible_moves(cords, cord_list_of_bottom_pieces, cord_list_of_top_pieces)
+    return_dict.update(possible_attacks(cords, color, cord_list_of_bottom_pieces, cord_list_of_top_pieces))
     return return_dict
 
 
-def mozliwe_ruchy(cordy_pionka, kolor_pionka, biale, czarne):
+def possible_moves(cordy_pionka, cord_list_of_bottom_pieces, cord_list_of_top_pieces):
     return_dict = dict()
-    if kolor_pionka == Color.white:
-        if (cordy_pionka[0]-1, cordy_pionka[1]+1) not in czarne + biale:
+    if cordy_pionka in cord_list_of_bottom_pieces:
+        if (cordy_pionka[0]-1, cordy_pionka[1]+1) not in cord_list_of_top_pieces + cord_list_of_bottom_pieces:
             if cordy_pionka[0]-1 >= 0 and cordy_pionka[1]+1 <= 7:
                 return_dict[(cordy_pionka[0] - 1, cordy_pionka[1] + 1)] = 0
 
-        if (cordy_pionka[0]+1, cordy_pionka[1]+1) not in czarne + biale:
+        if (cordy_pionka[0]+1, cordy_pionka[1]+1) not in cord_list_of_top_pieces + cord_list_of_bottom_pieces:
             if cordy_pionka[0]+1 <= 7 and cordy_pionka[1]+1 <= 7:
                 return_dict[(cordy_pionka[0] + 1, cordy_pionka[1] + 1)] = 0
 
-    elif kolor_pionka == Color.black:
-        if (cordy_pionka[0]-1, cordy_pionka[1]-1) not in czarne + biale:
+    else:
+        if (cordy_pionka[0]-1, cordy_pionka[1]-1) not in cord_list_of_top_pieces + cord_list_of_bottom_pieces:
             if cordy_pionka[0]-1 >= 0 and cordy_pionka[1]-1 >= 0:
                 return_dict[(cordy_pionka[0] - 1, cordy_pionka[1] - 1)] = 0
 
-        if (cordy_pionka[0]+1, cordy_pionka[1]-1) not in czarne + biale:
+        if (cordy_pionka[0]+1, cordy_pionka[1]-1) not in cord_list_of_top_pieces + cord_list_of_bottom_pieces:
             if cordy_pionka[0]+1 <= 7 and cordy_pionka[1]-1 >= 0:
                 return_dict[(cordy_pionka[0] + 1, cordy_pionka[1] - 1)] = 0
     return return_dict
 
 
-def mozliwe_bicia(cordy_pionka, kolor_pionka, biale, czarne):
-    if kolor_pionka == Color.white:
-        przeciwnik = czarne
-        gracz = biale
-    elif kolor_pionka == Color.black:
-        przeciwnik = biale
-        gracz = czarne
+def possible_attacks(cordy_pionka, cord_list_of_bottom_pieces, cord_list_of_top_pieces):
+    if cordy_pionka in cord_list_of_bottom_pieces:
+        przeciwnik = cord_list_of_top_pieces
     else:
-        raise ValueError
+        przeciwnik = cord_list_of_bottom_pieces
 
-    wszystkie = przeciwnik + gracz
+    wszystkie = cord_list_of_bottom_pieces + cord_list_of_top_pieces
     return_dict = dict()
     if (cordy_pionka[0] - 1, cordy_pionka[1] + 1) in przeciwnik and (cordy_pionka[0] - 2, cordy_pionka[1] + 2) not in wszystkie:
         if cordy_pionka[0] - 2 >= 0 and cordy_pionka[1] + 2 <= 7:

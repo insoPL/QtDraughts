@@ -10,14 +10,15 @@ class Pieces:
         logging.info("Pieces constructor")
         self.game = game
         self._pieces_list = list()
+        on_top = self.game.settings.who_on_top
         for foo in range(0, 8, 2):
-            self.add_piece((foo+1, 7), Color.black)
-            self.add_piece((foo, 6), Color.black)
-            self.add_piece((foo+1, 5), Color.black)
+            self.add_piece((foo, 7), on_top)
+            self.add_piece((foo+1, 6), on_top)
+            self.add_piece((foo, 5), on_top)
 
-            self.add_piece((foo, 2), Color.white)
-            self.add_piece((foo+1, 1), Color.white)
-            self.add_piece((foo, 0), Color.white)
+            self.add_piece((foo+1, 2), Color.opposite(on_top))
+            self.add_piece((foo, 1), Color.opposite(on_top))
+            self.add_piece((foo+1, 0), Color.opposite(on_top))
 
     def __iter__(self):
         return self._pieces_list.__iter__()
@@ -48,4 +49,7 @@ class Pieces:
                 black.append(foo.cords)
             if foo.color == Color.white:
                 white.append(foo.cords)
-        return white, black
+        if self.game.settings.who_on_top == Color.black:
+            return white, black
+        else:
+            return black, white
