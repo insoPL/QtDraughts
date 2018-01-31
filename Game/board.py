@@ -2,8 +2,6 @@
 from PyQt5.QtGui import QPainter, QBrush
 from PyQt5.QtCore import Qt
 import logging
-from .pieces import Pieces
-
 
 class Board:
     def __init__(self,screen):
@@ -40,10 +38,16 @@ class Board:
         y -= self.height_margines
         y -= self.toolbar_margines
         y /= self.size_of_one_tile
-        return int(x), int(y)
+        x = int(x)
+        y = int(y)
+        y -= 7
+        y = abs(y)
+        return x, y
 
     def cords_to_pos(self, cords):
         x, y = cords
+        y -= 7
+        y = abs(y)
         x = self.width_margines + x * self.size_of_one_tile
         y = self.toolbar_margines + self.height_margines + y * self.size_of_one_tile
         return x, y
