@@ -12,10 +12,19 @@ class DrawPiece(QFrame):
         logging.info("Piece %s Constructor at %s", str(color), str(cords))
         self.game = game
         self.board = game.board
-        self.cords = cords
+        self.__cords = cords
         self.color = color
         QFrame.__init__(self, game.screen)
         self.dragging = False
+
+    @property
+    def cords(self):
+        return self.__cords
+
+    @cords.setter
+    def cords(self, new_cords):
+        self.__cords = new_cords
+        self.paintEvent(None)
 
     @property
     def size_of_piece(self):

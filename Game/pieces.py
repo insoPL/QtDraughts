@@ -12,13 +12,13 @@ class Pieces:
         self._pieces_list = list()
         on_top = self.game.settings.who_on_top
         for foo in range(0, 8, 2):
-            self.add_piece((foo, 7), on_top)
-            self.add_piece((foo+1, 6), on_top)
-            self.add_piece((foo, 5), on_top)
+            self.add_piece((foo+1, 7), on_top)
+            self.add_piece((foo, 6), on_top)
+            self.add_piece((foo+1, 5), on_top)
 
-            self.add_piece((foo+1, 2), Color.opposite(on_top))
-            self.add_piece((foo, 1), Color.opposite(on_top))
-            self.add_piece((foo+1, 0), Color.opposite(on_top))
+            self.add_piece((foo, 2), Color.opposite(on_top))
+            self.add_piece((foo+1, 1), Color.opposite(on_top))
+            self.add_piece((foo, 0), Color.opposite(on_top))
 
     def __iter__(self):
         return self._pieces_list.__iter__()
