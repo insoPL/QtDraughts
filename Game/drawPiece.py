@@ -48,20 +48,24 @@ class DrawPiece(QFrame):
             self.move(*to)
 
     def mousePressEvent(self, e):
-        self.offset = e.pos()
-        self.dragging = True
+        logging.info("click")
+        if self.cords in self.game.list_of_pieces_which_can_move_or_attack():
+            self.offset = e.pos()
+            self.dragging = True
 
     def mouseReleaseEvent(self, e):
-        self.dragging = False
-        glob_pos = e.globalPos()
-        pos = self.board.mapFromGlobal(glob_pos)
-        dest_cords = self.board.pos_to_cords(pos)
-        logging.info("Trying to place "+str(self.cords)+" pieces on "+str(dest_cords))
-        self.game.try_to_make_a_move(self, dest_cords)
-        self.paintEvent(None)
+        if self.dragging:
+            self.dragging = False
+            glob_pos = e.globalPos()
+            pos = self.board.mapFromGlobal(glob_pos)
+            dest_cords = self.board.pos_to_cords(pos)
+            logging.info("Trying to place "+str(self.cords)+" pieces on "+str(dest_cords))
+            self.game.try_to_make_a_move(self, dest_cords)
+            self.paintEvent(None)
 
     def mouseMoveEvent(self, e):
-        self.move(self.mapToParent(e.pos()-self.offset))
+        if self.dragging:
+            self.move(self.mapToParent(e.pos()-self.offset))
 
     def __reduce__(self):
         QFrame.__reduce__()

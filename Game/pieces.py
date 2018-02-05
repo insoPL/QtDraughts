@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import logging
-
 from Game.drawPiece import DrawPiece
 from tools import *
 
@@ -33,7 +31,7 @@ class Pieces:
         piece.destroy()
         del piece
 
-    def get_piece(self, cords):  # --> Piece
+    def get_piece(self, cords):  # -> Piece
         for foo in self._pieces_list:
             if foo.cords == cords:
                 return foo
@@ -41,7 +39,8 @@ class Pieces:
         return False
 
     @property
-    def two_lists(self):
+    def two_lists(self)->(list,list):
+        """:return two lists of cords of pieces. First list is list of pieces on top of the board"""
         white = list()
         black = list()
         for foo in self._pieces_list:
