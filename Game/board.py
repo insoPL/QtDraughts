@@ -3,6 +3,7 @@ from PyQt5.QtGui import QPainter, QBrush
 from PyQt5.QtCore import Qt
 import logging
 
+
 class Board:
     def __init__(self,screen):
         logging.info("Board constructor")
@@ -38,6 +39,9 @@ class Board:
         y -= self.height_margines
         y -= self.toolbar_margines
         y /= self.size_of_one_tile
+        if x < 0 or y < 0 or x > 8 or y > 8:
+            #  if outside the board
+            raise ValueError
         x = int(x)
         y = int(y)
         y -= 7

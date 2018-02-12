@@ -58,7 +58,12 @@ class DrawPiece(QFrame):
             self.dragging = False
             glob_pos = e.globalPos()
             pos = self.board.mapFromGlobal(glob_pos)
-            dest_cords = self.board.pos_to_cords(pos)
+            try:
+                dest_cords = self.board.pos_to_cords(pos)
+            except ValueError:
+                logging.info("Trying to place " + str(self.cords) + " outside board.")
+                self.paintEvent(None)
+                return
             logging.info("Trying to place "+str(self.cords)+" pieces on "+str(dest_cords))
             self.game.try_to_make_a_move(self, dest_cords)
             self.paintEvent(None)

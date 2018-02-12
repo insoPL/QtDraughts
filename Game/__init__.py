@@ -17,11 +17,18 @@ class Game:
         self.board = Board(screen)
         self.pieces = Pieces(self)
         self.whoseTurn = self.settings.who_starts
+        self.forceMove = None
 
     def try_to_make_a_move(self, piece, dest_cords):
         if piece.color == self.whoseTurn:
             if piece.cords in self.list_of_pieces_which_can_attack():
                 if self.attack(piece, dest_cords):
+                    if self.settings.multiple_attack:
+                        if game_logic.possible_attacks(piece.cords, *self.pieces.two_lists):
+                            self.forceMove = piece.cords
+                            return
+                        else:
+                            self.forceMove = None
                     self.end_turn()
 
             if self.settings.force_attack and self.list_of_pieces_which_can_attack():
@@ -64,6 +71,8 @@ class Game:
         return list_of_pieces_which_can_attack
 
     def list_of_pieces_which_can_move_or_attack(self) -> list:
+        if self.forceMove is not None:
+            return [self.forceMove]
         list_of_pieces_which_can_attack = self.list_of_pieces_which_can_attack()
         if list_of_pieces_which_can_attack and self.settings.force_attack:
             return list_of_pieces_which_can_attack
@@ -79,3 +88,20 @@ class Game:
 
     def update_drawing(self):
         self.board.redraw()
+
+    def compute_possible_moves_in_this_turn(self):
+        ret_list = list()
+        for piece in self.pieces:
+            if piece.color == self.whoseTurn:
+                if piece.cords in self.list_of_pieces_which_can_attack():
+                    game_logic.possible_attacks(piece.cords, *self.pieces.two_lists)
+                    ret_list.append((piece.cords,))
+
+            if self.settings.force_attack and self.list_of_pieces_which_can_attack():
+                    return
+
+            possible_moves = game_logic.possible_moves(piece.cords, *self.pieces.two_lists)
+            for foo in possible_moves.keys():
+                if foo == dest_cords:
+                    piece.cords = dest_cords
+                    self.end_turn()

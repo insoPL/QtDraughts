@@ -8,3 +8,4 @@ class Settings:
         self.force_attack = True
         self.ai = False
         self.who_on_top = Color.white
+        self.multiple_attack = True
