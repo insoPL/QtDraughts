@@ -11,7 +11,7 @@ from .pieces import Pieces
 
 class Game:
     def __init__(self, screen):
-        logging.info("Game constructor")
+        logging.debug("Game constructor")
         self.settings = Settings()
         self.screen = screen
         self.board = Board(screen)
@@ -53,7 +53,7 @@ class Game:
         self.whoseTurn = Color.opposite(self.whoseTurn)
         if self.settings.ai and (self.whoseTurn == Color.white):
             piece_cords, target_cords, beaten_cords = ai(*self.pieces.two_lists)
-            logging.info("[AI]: AI chose to make a move %s -> %s", str(piece_cords), str(target_cords))
+            logging.debug("[AI]: AI chose to make a move %s -> %s", str(piece_cords), str(target_cords))
             piece = self.pieces.get_piece(piece_cords)
             piece.cords = target_cords
             if beaten_cords != 0:

@@ -14,13 +14,13 @@ class Main(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
-        logging.info("Initialization...")
+        logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+        logging.debug("Initialization...")
         self.init_ui()
         self.game = Game(self)
         self.show()
 
-        logging.info("Initialization complete")
+        logging.debug("Initialization complete")
 
     def init_toolbar(self):
         self.toolbar = self.addToolBar("Bar")
@@ -50,7 +50,6 @@ class Main(QMainWindow):
         self.init_toolbar()
 
     def paintEvent(self, e):
-        logging.debug("PaintEvent")
         self.game.update_drawing()
 
     def showSettings(self):

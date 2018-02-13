@@ -22,7 +22,7 @@ def ai(list_of_white_pieces, list_of_black_pieces):
         deep = 4
         score = _ai_rek(new_list_of_white_pieces, new_list_of_black_pieces, 1, deep)
         all_possible_moves_with_score.append((piece_cords, target_pos_cords, score, list_of_beaten_pieces))
-        logging.debug("[AI] It's possible to move %s -> %s with score %s", str(piece_cords), str(target_pos_cords), str(list_of_beaten_pieces))
+        #logging.debug("[AI] It's possible to move %s -> %s with score %s", str(piece_cords), str(target_pos_cords), str(list_of_beaten_pieces))
     return the_best_move(all_possible_moves_with_score)
 
 

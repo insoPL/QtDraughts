@@ -9,7 +9,7 @@ from PyQt5.QtGui import QPainter
 
 class DrawPiece(QFrame):
     def __init__(self, game, cords, color):
-        logging.info("Piece %s Constructor at %s", str(color), str(cords))
+        #logging.debug("Piece %s Constructor at %s", str(color), str(cords))
         self.game = game
         self.board = game.board
         self.__cords = cords
@@ -31,7 +31,7 @@ class DrawPiece(QFrame):
         return self.board.size_of_one_tile
 
     def paintEvent(self, e):
-        logging.debug("PaintEvent inside piece")
+        #logging.debug("PaintEvent inside piece")
         self.resize(self.size_of_piece, self.size_of_piece)
         pen = QPen()
         pen.setWidth(4)
@@ -48,7 +48,7 @@ class DrawPiece(QFrame):
             self.move(*to)
 
     def mousePressEvent(self, e):
-        logging.info("click")
+        logging.debug("click")
         if self.cords in self.game.list_of_pieces_which_can_move_or_attack():
             self.offset = e.pos()
             self.dragging = True
@@ -61,10 +61,10 @@ class DrawPiece(QFrame):
             try:
                 dest_cords = self.board.pos_to_cords(pos)
             except ValueError:
-                logging.info("Trying to place " + str(self.cords) + " outside board.")
+                logging.debug("Trying to place " + str(self.cords) + " outside board.")
                 self.paintEvent(None)
                 return
-            logging.info("Trying to place "+str(self.cords)+" pieces on "+str(dest_cords))
+            logging.debug("Trying to place "+str(self.cords)+" pieces on "+str(dest_cords))
             self.game.try_to_make_a_move(self, dest_cords)
             self.paintEvent(None)
 

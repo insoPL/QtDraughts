@@ -5,7 +5,7 @@ from tools import *
 
 class Pieces:
     def __init__(self, game):
-        logging.info("Pieces constructor")
+        logging.debug("Pieces constructor")
         self.game = game
         self._pieces_list = list()
         on_top = self.game.settings.who_on_top

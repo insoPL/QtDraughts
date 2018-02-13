@@ -6,7 +6,7 @@ import logging
 
 class Board:
     def __init__(self,screen):
-        logging.info("Board constructor")
+        logging.debug("Board constructor")
         self.toolbar_margines = 35
         self.screen = screen
         self.redraw()
