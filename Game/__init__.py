@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 import logging
 
+import Game.game_logic
+from settings import Settings
+from tools import Color
+from .AI import ai
 from .board import Board
 from .pieces import Pieces
-from tools import Color
-from .settings import Settings
-from .AI import ai
-import Game.game_logic
 
 
 class Game:
