@@ -10,9 +10,9 @@ from .pieces import Pieces
 
 
 class Game:
-    def __init__(self, screen):
+    def __init__(self, screen, settings):
         logging.debug("Game constructor")
-        self.settings = Settings()
+        self.settings = settings
         self.screen = screen
         self.board = Board(screen)
         self.pieces = Pieces(self)

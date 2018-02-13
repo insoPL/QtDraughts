@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QMainWindow, QAction, qApp, QApplication, QColorDial
 
 from Game import Game
 from settingsWindow import SettingsWindow
+from settings import Settings
 
 
 class Main(QMainWindow):
@@ -17,10 +18,11 @@ class Main(QMainWindow):
         logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
         logging.debug("Initialization...")
         self.init_ui()
-        self.game = Game(self)
+        self.settings = Settings()
+        self.game = Game(self,self.settings)
         self.show()
 
-        logging.debug("Initialization complete")
+        logging.info("Game Ready!")
 
     def init_toolbar(self):
         self.toolbar = self.addToolBar("Bar")
@@ -33,7 +35,7 @@ class Main(QMainWindow):
         # Options
         options_act = QAction(QIcon('graphics/settings.png'), 'Options', self)
         options_act.setShortcut('Ctrl+O')
-        options_act.triggered.connect(self.showSettings)
+        options_act.triggered.connect(self.show_settings_window)
         self.toolbar.addAction(options_act)
 
 
@@ -52,8 +54,8 @@ class Main(QMainWindow):
     def paintEvent(self, e):
         self.game.update_drawing()
 
-    def showSettings(self):
-        self.settings = SettingsWindow()
+    def show_settings_window(self):
+        self.settings_windows = SettingsWindow(self.settings)
 
 
 if __name__ == '__main__':
