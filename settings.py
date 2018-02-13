@@ -20,14 +20,19 @@ class Settings:
             except IOError:
                 logging.debug("Could not load setting file. Loading default settings...")
                 self.__init__(default=True)
+                return
             default_settings = Settings(default=True)
             for option in default_settings.__dict__.keys():
-                if not hasattr(self,option):
+                if not hasattr(self, option):
                     logging.debug("Settings file is lacking option "+str(option))
                     default_attr = getattr(default_settings,option)
                     setattr(self, option, default_attr)
-        #self.save_settings()
-        #print(self.json_dump())
+            self_options = list(self.__dict__.keys())
+            for option in self_options:
+                if not hasattr(default_settings, option):
+                    logging.debug("Settings file contains unsupported option "+str(option))
+                    delattr(self,option)
+        self.save_settings()
 
     def json_dump(self):
         return json.dumps(self, default=lambda o: o.__dict__)
