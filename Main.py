@@ -4,11 +4,13 @@ import logging
 import sys
 
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QMainWindow, QAction, qApp, QApplication, QColorDialog
+from PyQt5.QtWidgets import QMainWindow, QAction, qApp, QApplication, QColorDialog, QWidget, QSizePolicy
+from PyQt5.QtCore import QSize
 
 from Game import Game
 from settingsWindow import SettingsWindow
 from settings import Settings
+from mainButton import MainButton
 
 
 class Main(QMainWindow):
@@ -19,7 +21,8 @@ class Main(QMainWindow):
         logging.debug("Initialization...")
         self.init_ui()
         self.settings = Settings()
-        self.game = Game(self,self.settings)
+        self.game = Game(self, self.settings)
+        self.main_button = MainButton(self)
         self.show()
 
         logging.info("Game Ready!")
@@ -27,17 +30,27 @@ class Main(QMainWindow):
     def init_toolbar(self):
         self.toolbar = self.addToolBar("Bar")
         self.toolbar.setMovable(False)
-        # New Game
-        new_game_act = QAction(QIcon('graphics/start.png'), 'New Game', self)
-        new_game_act.setShortcut('Ctrl+N')
-        self.toolbar.addAction(new_game_act)
-        
+        self.toolbar.setIconSize(QSize(28, 28))
+
         # Options
         options_act = QAction(QIcon('graphics/settings.png'), 'Options', self)
         options_act.setShortcut('Ctrl+O')
         options_act.triggered.connect(self.show_settings_window)
         self.toolbar.addAction(options_act)
 
+        # Blank Space
+        spacer_widget = QWidget(self)
+        spacer_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        self.toolbar.addWidget(spacer_widget)
+
+        # Main Button
+        self.main_button = MainButton(self)
+        self.toolbar.addAction(self.main_button.qAction)
+
+        # Blank Space
+        spacer_widget2 = QWidget(self)
+        spacer_widget2.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        self.toolbar.addWidget(spacer_widget2)
 
         # Exit Game
         exit_act = QAction(QIcon('graphics/exit.png'), 'Exit', self)

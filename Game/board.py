@@ -7,13 +7,13 @@ import logging
 class Board:
     def __init__(self,screen):
         logging.debug("Board constructor")
-        self.toolbar_margines = 35
+        self.toolbar_margines = 40
         self.screen = screen
         self.redraw()
 
     @property
     def size_of_one_tile(self):
-        height = self.screen.height()-10
+        height = self.screen.height()-30
         width = self.screen.width()-self.toolbar_margines-10
         height -= 25  # correction for toolbar
         if height < width:

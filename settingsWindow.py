@@ -13,7 +13,7 @@ class SettingsWindow(QWidget):
         grid.addLayout(self.cancel_accept_buttons())
         self.setLayout(grid)
 
-        self.setWindowTitle("PyQt5 Group Box")
+        self.setWindowTitle("Settings")
         self.resize(400, 300)
         self.show()
 
