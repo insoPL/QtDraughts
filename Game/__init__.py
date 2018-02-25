@@ -15,9 +15,18 @@ class Game:
         self.settings = settings
         self.screen = screen
         self.board = Board(screen)
+        self.pieces = None
+        self.whoseTurn = None
+        self.forceMove = None
+
+    def start_match(self):
         self.pieces = Pieces(self)
         self.whoseTurn = self.settings.who_starts
-        self.forceMove = None
+        #self.update_drawing()
+
+    def end_math(self):
+        self.pieces.remove_all_pieces()
+        self.whoseTurn = None
 
     def try_to_make_a_move(self, piece, dest_cords):
         if piece.color == self.whoseTurn:

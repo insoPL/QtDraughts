@@ -16,6 +16,7 @@ class DrawPiece(QFrame):
         self.color = color
         QFrame.__init__(self, game.screen)
         self.dragging = False
+        self.show()
 
     @property
     def cords(self):

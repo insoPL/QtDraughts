@@ -31,6 +31,13 @@ class Pieces:
         piece.destroy()
         del piece
 
+    def remove_all_pieces(self):
+        for piece in self:
+            piece.setParent(None)
+            piece.destroy()
+            del piece
+        self._pieces_list = list()
+
     def get_piece(self, cords):  # -> Piece
         for foo in self._pieces_list:
             if foo.cords == cords:

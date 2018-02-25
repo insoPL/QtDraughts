@@ -4,13 +4,12 @@ import logging
 import sys
 
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QMainWindow, QAction, qApp, QApplication, QColorDialog, QWidget, QSizePolicy
+from PyQt5.QtWidgets import QMainWindow, QAction, qApp, QApplication, QColorDialog, QWidget, QSizePolicy, QMessageBox
 from PyQt5.QtCore import QSize
 
 from Game import Game
 from settingsWindow import SettingsWindow
 from settings import Settings
-from mainButton import MainButton
 
 
 class Main(QMainWindow):
@@ -19,10 +18,9 @@ class Main(QMainWindow):
 
         logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
         logging.debug("Initialization...")
-        self.init_ui()
         self.settings = Settings()
         self.game = Game(self, self.settings)
-        self.main_button = MainButton(self)
+        self.init_ui()
         self.show()
 
         logging.info("Game Ready!")
@@ -31,6 +29,12 @@ class Main(QMainWindow):
         self.toolbar = self.addToolBar("Bar")
         self.toolbar.setMovable(False)
         self.toolbar.setIconSize(QSize(28, 28))
+
+        # Surrender
+        self.surrender_button = QAction(QIcon('graphics/surrender.png'), 'Surrender', self)
+        self.surrender_button.triggered.connect(self.surrender_button_clicked)
+        self.surrender_button.setDisabled(True)
+        self.toolbar.addAction(self.surrender_button)
 
         # Options
         options_act = QAction(QIcon('graphics/settings.png'), 'Options', self)
@@ -44,8 +48,10 @@ class Main(QMainWindow):
         self.toolbar.addWidget(spacer_widget)
 
         # Main Button
-        self.main_button = MainButton(self)
-        self.toolbar.addAction(self.main_button.qAction)
+        self.main_button = QAction(QIcon('graphics/start.png'), 'New Game', self)
+        self.main_button.setShortcut('Ctrl+N')
+        self.main_button.triggered.connect(self.start_button_clicked)
+        self.toolbar.addAction(self.main_button)
 
         # Blank Space
         spacer_widget2 = QWidget(self)
@@ -70,6 +76,28 @@ class Main(QMainWindow):
     def show_settings_window(self):
         self.settings_windows = SettingsWindow(self.settings)
 
+    def start_button_clicked(self):
+        self.game.start_match()
+        self.surrender_button.setDisabled(False)
+
+    def surrender_button_clicked(self):
+        msgBox = QMessageBox()
+        msgBox.setWindowTitle("Player surrendered")
+        if self.settings.ai:
+            msgBox.setText("You lost.\n Do You want to play again?")
+        else:
+            pass
+        msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        msgBox.buttonClicked.connect(self.surrender_button_clicked_answered)
+        msgBox.exec_()
+
+    def surrender_button_clicked_answered(self, i):
+        if i.text() == "&Yes":
+            self.game.end_math()
+            self.game.start_match()
+        elif i.text() == "&No":
+            self.surrender_button.setDisabled(True)
+            self.game.end_math()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
