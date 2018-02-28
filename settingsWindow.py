@@ -26,7 +26,6 @@ class SettingsWindow(QWidget):
         self.checkBoxes.append(("multiple_attack", QCheckBox("Multiple attacks of one piece in the turn.")))
         self.checkBoxes.append(("ai", QCheckBox("Computer enemy.")))
         self.checkBoxes.append(("who_starts", QCheckBox("White pieces start the game.")))
-        self.checkBoxes.append(("who_on_top", QCheckBox("White pieces on top of arena")))
 
         for name, checkBox in self.checkBoxes:
             checkBox.setChecked(getattr(self.settings, name))

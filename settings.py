@@ -11,7 +11,6 @@ class Settings:
             self.who_starts = Color.white
             self.force_attack = True
             self.ai = False
-            self.who_on_top = Color.white
             self.multiple_attack = True
         else:
             try:
@@ -31,7 +30,7 @@ class Settings:
             for option in self_options:
                 if not hasattr(default_settings, option):
                     logging.debug("Settings file contains unsupported option "+str(option))
-                    delattr(self,option)
+                    delattr(self, option)
         self.save_settings()
 
     def json_dump(self):
