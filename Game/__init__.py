@@ -2,11 +2,10 @@
 import logging
 
 import Game.game_logic
-from settings import Settings
 from tools import Color
-from .AI import ai
 from .board import Board
 from .pieces import Pieces
+from .ai_wrapper import ThreadAI
 
 
 class Game:
@@ -22,7 +21,10 @@ class Game:
     def start_match(self):
         self.pieces = Pieces(self)
         self.whoseTurn = self.settings.who_starts
-        #self.update_drawing()
+        self.screen.surrender_button.setDisabled(False)
+        if self.settings.ai and self.settings.who_starts:
+            self.screen.main_button.update()
+            self.run_ai()
 
     def end_math(self):
         self.pieces.remove_all_pieces()
@@ -60,15 +62,25 @@ class Game:
 
     def end_turn(self):
         self.whoseTurn = Color.opposite(self.whoseTurn)
+        self.screen.main_button.update()
         if self.settings.ai and (self.whoseTurn == Color.white):
-            piece_cords, target_cords, beaten_cords = ai(*self.pieces.two_lists)
-            logging.debug("[AI]: AI chose to make a move %s -> %s", str(piece_cords), str(target_cords))
-            piece = self.pieces.get_piece(piece_cords)
-            piece.cords = target_cords
-            if beaten_cords != 0:
-                for beaten_piece in beaten_cords:
-                    self.pieces.remove_piece(beaten_piece)
-            self.whoseTurn = Color.opposite(self.whoseTurn)
+            self.run_ai()
+
+    def run_ai(self):
+        self.myThread = ThreadAI(self.pieces)
+        self.myThread.finished_calculation.connect(self.ai_end_turn)
+        self.myThread.start()
+
+    def ai_end_turn(self):
+        piece_cords, target_cords, beaten_cords = self.myThread.value
+        logging.debug("[AI]: AI chose to make a move %s -> %s", str(piece_cords), str(target_cords))
+        piece = self.pieces.get_piece(piece_cords)
+        piece.cords = target_cords
+        if beaten_cords != 0:
+            for beaten_piece in beaten_cords:
+                self.pieces.remove_piece(beaten_piece)
+        self.whoseTurn = Color.opposite(self.whoseTurn)
+        self.screen.main_button.update()
 
     def list_of_pieces_which_can_attack(self) -> list:
         list_of_pieces_which_can_attack = list()

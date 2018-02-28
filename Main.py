@@ -10,6 +10,7 @@ from PyQt5.QtCore import QSize
 from Game import Game
 from settingsWindow import SettingsWindow
 from settings import Settings
+from MainButton import MainButton
 
 
 class Main(QMainWindow):
@@ -48,8 +49,7 @@ class Main(QMainWindow):
         self.toolbar.addWidget(spacer_widget)
 
         # Main Button
-        self.main_button = QAction(QIcon('graphics/start.png'), 'New Game', self)
-        self.main_button.setShortcut('Ctrl+N')
+        self.main_button = MainButton(self)
         self.main_button.triggered.connect(self.start_button_clicked)
         self.toolbar.addAction(self.main_button)
 
@@ -74,11 +74,11 @@ class Main(QMainWindow):
         self.game.update_drawing()
 
     def show_settings_window(self):
-        self.settings_windows = SettingsWindow(self.settings)
+        self.settings_window = SettingsWindow(self.settings)
 
     def start_button_clicked(self):
-        self.game.start_match()
-        self.surrender_button.setDisabled(False)
+        if self.game.pieces is None:
+            self.game.start_match()
 
     def surrender_button_clicked(self):
         msgBox = QMessageBox()
