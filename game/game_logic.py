@@ -1,12 +1,6 @@
 # -*- coding: utf-8 -*-
 
 
-def mozliwe_ruchy_i_bicia(cords, color, cord_list_of_bottom_pieces, cord_list_of_top_pieces):  # zwraca słownik dict[docelowy_cord] = zbity_pion
-    return_dict = possible_moves(cords, cord_list_of_bottom_pieces, cord_list_of_top_pieces)
-    return_dict.update(possible_attacks(cords, color, cord_list_of_bottom_pieces, cord_list_of_top_pieces))
-    return return_dict
-
-
 def possible_moves(cordy_pionka, cord_list_of_bottom_pieces, cord_list_of_top_pieces):
     return_dict = dict()
     if cordy_pionka in cord_list_of_bottom_pieces:

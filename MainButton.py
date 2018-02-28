@@ -6,7 +6,7 @@ from PyQt5.QtGui import QIcon
 class MainButton(QAction):
     def __init__(self, main_window):
         self.main_window = main_window
-        QAction.__init__(self, 'New Game', main_window)
+        QAction.__init__(self, 'New game', main_window)
         self.setShortcut('Ctrl+N')
         self.update()
 

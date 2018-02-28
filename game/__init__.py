@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 
-import Game.game_logic
+import game.game_logic
 from tools import Color
 from .board import Board
 from .pieces import Pieces
@@ -10,7 +10,7 @@ from .ai_wrapper import ThreadAI
 
 class Game:
     def __init__(self, screen, settings):
-        logging.debug("Game constructor")
+        logging.debug("game constructor")
         self.settings = settings
         self.screen = screen
         self.board = Board(screen)
@@ -67,12 +67,12 @@ class Game:
         self.compute_possible_moves_in_this_turn()
 
     def ai_start_turn(self):
-        self.myThread = ThreadAI(self.pieces)
-        self.myThread.finished_calculation.connect(self.ai_end_turn)
-        self.myThread.start()
+        self.threadAI = ThreadAI(self.pieces)
+        self.threadAI.finished_calculation.connect(self.ai_end_turn)
+        self.threadAI.start()
 
     def ai_end_turn(self):
-        piece_cords, target_cords, beaten_cords = self.myThread.value
+        piece_cords, target_cords, beaten_cords = self.threadAI.best_move
         logging.debug("[AI]: AI chose to make a move %s -> %s", str(piece_cords), str(target_cords))
         piece = self.pieces.get_piece(piece_cords)
         piece.cords = target_cords

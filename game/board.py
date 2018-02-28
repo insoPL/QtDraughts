@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-from PyQt5.QtGui import QPainter, QBrush
-from PyQt5.QtCore import Qt
 import logging
+
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPainter
 
 
 class Board:
-    def __init__(self,screen):
+    def __init__(self, screen):
         logging.debug("Board constructor")
         self.toolbar_margines = 40
         self.screen = screen
@@ -13,19 +14,19 @@ class Board:
 
     @property
     def size_of_one_tile(self):
-        height = self.screen.height()-30
-        width = self.screen.width()-self.toolbar_margines-10
+        height = self.screen.height() - 30
+        width = self.screen.width() - self.toolbar_margines - 10
         height -= 25  # correction for toolbar
         if height < width:
             height = height
-            return round(height/8)
+            return round(height / 8)
         else:
             width = width
-            return round(width/8)
+            return round(width / 8)
 
     @property
     def height_margines(self):
-        return ((self.screen.height()-self.toolbar_margines)/2)-(4*self.size_of_one_tile)
+        return ((self.screen.height() - self.toolbar_margines) / 2) - (4 * self.size_of_one_tile)
 
     @property
     def width_margines(self):

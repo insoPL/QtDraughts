@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from unittest import TestCase
-from Game.AI import ai
-from Game.AI import _ai_rek_another_attack_in_a_row
+from game.AI import ai
+from game.AI import _ai_rek_another_attack_in_a_row
 from tools import *
 
 

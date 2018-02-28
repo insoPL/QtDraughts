@@ -9,7 +9,7 @@ from PyQt5.QtGui import QPainter
 
 class DrawPiece(QFrame):
     def __init__(self, game, cords, color):
-        #logging.debug("Piece %s Constructor at %s", str(color), str(cords))
+        # logging.debug("Piece %s Constructor at %s", str(color), str(cords))
         self.game = game
         self.board = game.board
         self.__cords = cords
@@ -31,8 +31,9 @@ class DrawPiece(QFrame):
     def size_of_piece(self):
         return self.board.size_of_one_tile
 
+    # noinspection PyUnusedLocal
     def paintEvent(self, e):
-        #logging.debug("PaintEvent inside piece")
+        # logging.debug("PaintEvent inside piece")
         self.resize(self.size_of_piece, self.size_of_piece)
         pen = QPen()
         pen.setWidth(4)
@@ -42,7 +43,7 @@ class DrawPiece(QFrame):
         qp.setRenderHint(QPainter.HighQualityAntialiasing)
         qp.begin(self)
         qp.setPen(pen)
-        qp.drawEllipse(5, 5, self.size_of_piece-10, self.size_of_piece-10)
+        qp.drawEllipse(5, 5, self.size_of_piece - 10, self.size_of_piece - 10)
         qp.end()
         if self.dragging is False:
             to = self.board.cords_to_pos(self.cords)
@@ -65,13 +66,13 @@ class DrawPiece(QFrame):
                 logging.debug("Trying to place " + str(self.cords) + " outside board.")
                 self.paintEvent(None)
                 return
-            logging.debug("Trying to place "+str(self.cords)+" pieces on "+str(dest_cords))
+            logging.debug("Trying to place " + str(self.cords) + " pieces on " + str(dest_cords))
             self.game.try_to_make_a_move(self, dest_cords)
             self.paintEvent(None)
 
     def mouseMoveEvent(self, e):
         if self.dragging:
-            self.move(self.mapToParent(e.pos()-self.offset))
+            self.move(self.mapToParent(e.pos() - self.offset))
 
     def __reduce__(self):
         QFrame.__reduce__()

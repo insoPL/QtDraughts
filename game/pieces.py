@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from Game.drawPiece import DrawPiece
+from game.drawPiece import DrawPiece
 from tools import *
+import logging
 
 
 class Pieces:
@@ -10,12 +11,12 @@ class Pieces:
         self._pieces_list = list()
         on_top = Color.white
         for foo in range(0, 8, 2):
-            self.add_piece((foo+1, 7), on_top)
+            self.add_piece((foo + 1, 7), on_top)
             self.add_piece((foo, 6), on_top)
-            self.add_piece((foo+1, 5), on_top)
+            self.add_piece((foo + 1, 5), on_top)
 
             self.add_piece((foo, 2), Color.opposite(on_top))
-            self.add_piece((foo+1, 1), Color.opposite(on_top))
+            self.add_piece((foo + 1, 1), Color.opposite(on_top))
             self.add_piece((foo, 0), Color.opposite(on_top))
 
     def __iter__(self):
@@ -43,10 +44,9 @@ class Pieces:
             if foo.cords == cords:
                 return foo
         raise ValueError
-        return False
 
     @property
-    def two_lists(self)->(list,list):
+    def two_lists(self) -> (list, list):
         """:return two lists of cords of pieces. First list is list of pieces on top of the board"""
         white = list()
         black = list()

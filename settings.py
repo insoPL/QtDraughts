@@ -5,7 +5,6 @@ import logging
 
 
 class Settings:
-
     def __init__(self, default=False):
         if default:
             self.who_starts = Color.white
@@ -23,13 +22,13 @@ class Settings:
             default_settings = Settings(default=True)
             for option in default_settings.__dict__.keys():
                 if not hasattr(self, option):
-                    logging.debug("Settings file is lacking option "+str(option))
-                    default_attr = getattr(default_settings,option)
+                    logging.debug("Settings file is lacking option " + str(option))
+                    default_attr = getattr(default_settings, option)
                     setattr(self, option, default_attr)
             self_options = list(self.__dict__.keys())
             for option in self_options:
                 if not hasattr(default_settings, option):
-                    logging.debug("Settings file contains unsupported option "+str(option))
+                    logging.debug("Settings file contains unsupported option " + str(option))
                     delattr(self, option)
         self.save_settings()
 

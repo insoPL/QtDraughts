@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from tools import *
 from .ai_tools import *
-from Game.game_logic import possible_attacks
 
 
 def ai(list_of_white_pieces, list_of_black_pieces):
@@ -13,7 +11,9 @@ def ai(list_of_white_pieces, list_of_black_pieces):
         new_list_of_black_pieces = move_piece_on_list(list_of_black_pieces, piece_cords, target_pos_cords)
         if beaten_piece_cords != 0:
             new_list_of_white_pieces = remove_piece_from_list(list_of_white_pieces, beaten_piece_cords)
-            target_pos_cords, list_of_beaten_pieces = _ai_rek_another_attack_in_a_row(new_list_of_white_pieces, new_list_of_black_pieces, Color.black, target_pos_cords)
+            target_pos_cords, list_of_beaten_pieces = _ai_rek_another_attack_in_a_row(new_list_of_white_pieces,
+                                                                                      new_list_of_black_pieces,
+                                                                                      Color.black, target_pos_cords)
             for beaten_piece in list_of_beaten_pieces:
                 new_list_of_white_pieces = remove_piece_from_list(new_list_of_white_pieces, beaten_piece)
             list_of_beaten_pieces.append(beaten_piece_cords)
@@ -22,7 +22,7 @@ def ai(list_of_white_pieces, list_of_black_pieces):
         deep = 5
         score = _ai_rek(new_list_of_white_pieces, new_list_of_black_pieces, 1, deep)
         all_possible_moves_with_score.append((piece_cords, target_pos_cords, score, list_of_beaten_pieces))
-        #logging.debug("[AI] It's possible to move %s -> %s with score %s", str(piece_cords), str(target_pos_cords), str(list_of_beaten_pieces))
+        # logging.debug("[AI] It's possible to move %s -> %s with score %s", str(piece_cords), str(target_pos_cords), str(list_of_beaten_pieces))
     return the_best_move(all_possible_moves_with_score)
 
 
@@ -42,7 +42,10 @@ def _ai_rek(list_of_white_pieces, list_of_black_pieces, color_of_active_side, de
             new_list_of_black_pieces = move_piece_on_list(list_of_black_pieces, piece_cords, target_pos_cords)
             if beaten_piece_cords != 0:
                 new_list_of_white_pieces = remove_piece_from_list(list_of_white_pieces, beaten_piece_cords)
-                target_pos_cords, list_of_beaten_pieces = _ai_rek_another_attack_in_a_row(new_list_of_white_pieces, new_list_of_black_pieces, color_of_active_side, target_pos_cords)
+                target_pos_cords, list_of_beaten_pieces = _ai_rek_another_attack_in_a_row(new_list_of_white_pieces,
+                                                                                          new_list_of_black_pieces,
+                                                                                          color_of_active_side,
+                                                                                          target_pos_cords)
                 for foo in list_of_beaten_pieces:
                     new_list_of_white_pieces = remove_piece_from_list(new_list_of_white_pieces, foo)
             else:
@@ -54,7 +57,10 @@ def _ai_rek(list_of_white_pieces, list_of_black_pieces, color_of_active_side, de
             new_list_of_white_pieces = move_piece_on_list(list_of_white_pieces, piece_cords, target_pos_cords)
             if beaten_piece_cords != 0:
                 new_list_of_black_pieces = remove_piece_from_list(list_of_black_pieces, beaten_piece_cords)
-                target_pos_cords, list_of_beaten_pieces = _ai_rek_another_attack_in_a_row(new_list_of_white_pieces, new_list_of_black_pieces, color_of_active_side, target_pos_cords)
+                target_pos_cords, list_of_beaten_pieces = _ai_rek_another_attack_in_a_row(new_list_of_white_pieces,
+                                                                                          new_list_of_black_pieces,
+                                                                                          color_of_active_side,
+                                                                                          target_pos_cords)
                 for foo in list_of_beaten_pieces:
                     new_list_of_black_pieces = remove_piece_from_list(new_list_of_black_pieces, foo)
             else:
@@ -75,7 +81,9 @@ def _ai_rek_another_attack_in_a_row(list_of_white_pieces, list_of_black_pieces, 
             new_list_of_white_pieces = move_piece_on_list(list_of_white_pieces, cords, target_cords)
             new_list_of_black_pieces = remove_piece_from_list(list_of_black_pieces, beaten_cords)
 
-        target_cords, beaten_piece_cords = _ai_rek_another_attack_in_a_row(new_list_of_white_pieces, new_list_of_black_pieces, color_of_active_side, target_cords)
+        target_cords, beaten_piece_cords = _ai_rek_another_attack_in_a_row(new_list_of_white_pieces,
+                                                                           new_list_of_black_pieces,
+                                                                           color_of_active_side, target_cords)
         ret_list = [beaten_cords]
         ret_list.extend(beaten_piece_cords)
         possible_scores.append((target_cords, ret_list))

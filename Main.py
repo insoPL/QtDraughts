@@ -3,14 +3,14 @@
 import logging
 import sys
 
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QMainWindow, QAction, qApp, QApplication, QColorDialog, QWidget, QSizePolicy, QMessageBox
 from PyQt5.QtCore import QSize
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QMainWindow, QAction, qApp, QApplication, QWidget, QSizePolicy, QMessageBox
 
-from Game import Game
-from settingsWindow import SettingsWindow
-from settings import Settings
+from game import Game
 from MainButton import MainButton
+from settings import Settings
+from settingsWindow import SettingsWindow
 
 
 class Main(QMainWindow):
@@ -24,7 +24,7 @@ class Main(QMainWindow):
         self.init_ui()
         self.show()
 
-        logging.info("Game Ready!")
+        logging.info("game Ready!")
 
     def init_toolbar(self):
         self.toolbar = self.addToolBar("Bar")
@@ -58,7 +58,7 @@ class Main(QMainWindow):
         spacer_widget2.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         self.toolbar.addWidget(spacer_widget2)
 
-        # Exit Game
+        # Exit game
         exit_act = QAction(QIcon('graphics/exit.png'), 'Exit', self)
         exit_act.setShortcut('Ctrl+Q')
         exit_act.triggered.connect(qApp.quit)
@@ -66,10 +66,11 @@ class Main(QMainWindow):
         self.toolbar.addAction(exit_act)
 
     def init_ui(self):
-        self.setMinimumSize(300,300)
+        self.setMinimumSize(300, 300)
         self.setWindowTitle('Draughts')
         self.init_toolbar()
 
+    # noinspection PyUnusedLocal
     def paintEvent(self, e):
         self.game.update_drawing()
 
@@ -81,15 +82,15 @@ class Main(QMainWindow):
             self.game.start_match()
 
     def surrender_button_clicked(self):
-        msgBox = QMessageBox()
-        msgBox.setWindowTitle("Player surrendered")
+        msg_box = QMessageBox()
+        msg_box.setWindowTitle("Player surrendered")
         if self.settings.ai:
-            msgBox.setText("You lost.\n Do You want to play again?")
+            msg_box.setText("You lost.\n Do You want to play again?")
         else:
             pass
-        msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        msgBox.buttonClicked.connect(self.surrender_button_clicked_answered)
-        msgBox.exec_()
+        msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        msg_box.buttonClicked.connect(self.surrender_button_clicked_answered)
+        msg_box.exec_()
 
     def surrender_button_clicked_answered(self, i):
         if i.text() == "&Yes":
@@ -98,6 +99,7 @@ class Main(QMainWindow):
         elif i.text() == "&No":
             self.surrender_button.setDisabled(True)
             self.game.end_math()
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
