@@ -50,7 +50,7 @@ class DrawPiece(QFrame):
 
     def mousePressEvent(self, e):
         logging.debug("click")
-        if self.cords in self.game.list_of_pieces_which_can_move_or_attack():
+        if self.cords in self.game.possible_moves:
             self.offset = e.pos()
             self.dragging = True
 
