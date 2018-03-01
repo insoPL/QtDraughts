@@ -39,7 +39,7 @@ def the_best_move(all_possible_moves):
     if len(ret_list) != 0:
         return random.choice(ret_list)
     else:
-        raise NoPossibleMove(Color.white)
+        return None
 
 
 def max_score(best_value, this_value):

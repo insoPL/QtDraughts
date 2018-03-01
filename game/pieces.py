@@ -19,6 +19,12 @@ class Pieces:
             self.add_piece((foo + 1, 1), Color.opposite(on_top))
             self.add_piece((foo, 0), Color.opposite(on_top))
 
+    def __del__(self):
+        for piece in self:
+            piece.setParent(None)
+            piece.destroy()
+            del piece
+
     def __iter__(self):
         return self._pieces_list.__iter__()
 
@@ -31,13 +37,6 @@ class Pieces:
         piece.setParent(None)
         piece.destroy()
         del piece
-
-    def remove_all_pieces(self):
-        for piece in self:
-            piece.setParent(None)
-            piece.destroy()
-            del piece
-        self._pieces_list = list()
 
     def get_piece(self, cords):  # -> Piece
         for foo in self._pieces_list:

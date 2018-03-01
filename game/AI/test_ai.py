@@ -7,9 +7,12 @@ from tools import *
 
 class TestAi(TestCase):
     def testNoPossibleMovement(self):
-        self.assertRaises(NoPossibleMove, ai, [], [])
-        self.assertRaises(NoPossibleMove, ai, [], [(2, 0)])
-        self.assertRaises(NoPossibleMove, ai, [(0, 0), (2, 0)], [(1, 1)])
+        wynik = ai([], [])
+        self.assertEqual(wynik, None)
+        wynik = ai([], [(2, 0)])
+        self.assertEqual(wynik, None)
+        wynik = ai([(0, 0), (2, 0)], [(1, 1)])
+        self.assertEqual(wynik, None)
 
     def testSimpleMove(self):
         wynik = ai([], [(7,7)])

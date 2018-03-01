@@ -16,6 +16,7 @@ class ThreadAI(QThread):
 
     def run(self):
         self.best_move = ai(*self.pieces.two_lists)
+
         self.finished_calculation.emit()
 
 

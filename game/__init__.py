@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import logging
 
+from PyQt5.QtWidgets import QMessageBox
+
 import game.game_logic
 from tools import Color
 from .board import Board
@@ -16,7 +18,7 @@ class Game:
         self.board = Board(screen)
         self.pieces = None
         self.whoseTurn = None
-        self.possible_moves = None
+        self.possible_moves = list()
 
     def start_match(self):
         self.pieces = Pieces(self)
@@ -29,8 +31,10 @@ class Game:
         self.screen.main_button.update()
 
     def end_math(self):
-        self.pieces.remove_all_pieces()
+        self.possible_moves = list()
+        self.pieces = None
         self.whoseTurn = None
+        self.screen.main_button.update()
 
     def try_to_make_a_move(self, piece, dest_cords):
         if piece.cords in self.possible_moves:
@@ -39,7 +43,7 @@ class Game:
                     self.possible_moves = [piece.cords]
                     return
                 self.end_turn()
-            if self.try_move(piece, dest_cords):
+            elif self.try_move(piece, dest_cords):
                 self.end_turn()
 
     def try_move(self, piece, dest_cords):
@@ -64,7 +68,8 @@ class Game:
         self.screen.main_button.update()
         if self.settings.ai and (self.whoseTurn == Color.white):
             self.ai_start_turn()
-        self.compute_possible_moves_in_this_turn()
+        else:
+            self.compute_possible_moves_in_this_turn()
 
     def ai_start_turn(self):
         self.threadAI = ThreadAI(self.pieces)
@@ -72,7 +77,13 @@ class Game:
         self.threadAI.start()
 
     def ai_end_turn(self):
+        if self.threadAI.best_move is None:
+            self.end_math()
+            self.threadAI = None
+            QMessageBox.information(self.screen, 'Game Over', "      You Won.      ")
+            return
         piece_cords, target_cords, beaten_cords = self.threadAI.best_move
+
         logging.debug("[AI]: AI chose to make a move %s -> %s", str(piece_cords), str(target_cords))
         piece = self.pieces.get_piece(piece_cords)
         piece.cords = target_cords
@@ -81,6 +92,7 @@ class Game:
                 self.pieces.remove_piece(beaten_piece)
         self.whoseTurn = Color.opposite(self.whoseTurn)
         self.screen.main_button.update()
+        self.threadAI = None
         self.compute_possible_moves_in_this_turn()
 
     def list_of_pieces_which_can_attack(self) -> list:
@@ -119,3 +131,9 @@ class Game:
             if piece.color == self.whoseTurn and piece.cords in list_of_pieces_which_can_move:
                 ret_list.append(piece.cords)
         self.possible_moves = ret_list
+        if not self.possible_moves:
+            self.end_math()
+            if self.settings.ai:
+                QMessageBox.information(self.screen, 'Game Over', "You Lost.")
+            else:
+                QMessageBox.information(self.screen, 'Game Over', "Player with "+Color.to_str(Color.opposite(self.whoseTurn))+" pieces won.")
