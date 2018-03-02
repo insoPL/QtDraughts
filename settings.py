@@ -11,6 +11,7 @@ class Settings:
             self.force_attack = True
             self.ai = False
             self.multiple_attack = True
+            self.always_on_top = False
         else:
             try:
                 data = open('settings.json')

@@ -3,7 +3,7 @@
 import logging
 import sys
 
-from PyQt5.QtCore import QSize
+from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QAction, qApp, QApplication, QWidget, QSizePolicy, QMessageBox
 
@@ -19,9 +19,14 @@ class Main(QMainWindow):
 
         logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
         logging.debug("Initialization...")
+        self.setWindowIcon(QIcon('graphics\start.png'))
         self.settings = Settings()
         self.game = Game(self, self.settings)
         self.init_ui()
+
+        if self.settings.always_on_top:
+            self.setWindowFlags(Qt.WindowStaysOnTopHint)
+
         self.show()
 
         logging.info("game Ready!")
@@ -84,10 +89,7 @@ class Main(QMainWindow):
     def surrender_button_clicked(self):
         msg_box = QMessageBox()
         msg_box.setWindowTitle("Player surrendered")
-        if self.settings.ai:
-            msg_box.setText("You lost.\n Do You want to play again?")
-        else:
-            pass
+        msg_box.setText("Do You want to play again?")
         msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
         msg_box.buttonClicked.connect(self.surrender_button_clicked_answered)
         msg_box.exec_()

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from PyQt5.QtWidgets import QVBoxLayout, QWidget, QCheckBox, QGroupBox, QHBoxLayout, QPushButton
+from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import Qt
 
 from settings import Settings
 
@@ -7,7 +9,10 @@ from settings import Settings
 class SettingsWindow(QWidget):
     def __init__(self, settings):
         super().__init__()
+        self.setWindowIcon(QIcon('graphics\settings.png'))
         self.settings = settings
+        if self.settings.always_on_top:
+            self.setWindowFlags(Qt.WindowStaysOnTopHint)
 
         grid = QVBoxLayout()
         grid.addWidget(self.create_game_rules_group())
@@ -28,6 +33,7 @@ class SettingsWindow(QWidget):
         self.check_boxes.append(("multiple_attack", QCheckBox("Multiple attacks of one piece in the turn.")))
         self.check_boxes.append(("ai", QCheckBox("Computer enemy.")))
         self.check_boxes.append(("who_starts", QCheckBox("White pieces start the game.")))
+        self.check_boxes.append(("always_on_top", QCheckBox("Windows will be always on top. (Requires manual restart)")))
 
         for name, checkBox in self.check_boxes:
             checkBox.setChecked(getattr(self.settings, name))
