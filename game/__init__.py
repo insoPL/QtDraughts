@@ -24,6 +24,7 @@ class Game:
     def start_multiplayer_match(self, network_thread):
         self.multiplayer = True
         self.network_thread = network_thread
+        self.network_thread.new_move.connect(self.mp_enemy_make_move)
         self.end_math()
         self.start_match()
         logging.debug("Starting Multiplayer match")
@@ -32,7 +33,9 @@ class Game:
         self.pieces = Pieces(self)
         self.whoseTurn = self.settings.who_starts
         self.screen.surrender_button.setDisabled(False)
-        if self.settings.ai and self.settings.who_starts:
+        if self.multiplayer:
+            pass
+        elif self.settings.ai and self.settings.who_starts:
             self.ai_start_turn()
         else:
             self.compute_possible_moves_in_this_turn()
@@ -74,10 +77,16 @@ class Game:
     def end_turn(self):
         self.whoseTurn = Color.opposite(self.whoseTurn)
         self.screen.main_button.update()
-        if self.settings.ai and (self.whoseTurn == Color.white):
+        if self.multiplayer and (self.whoseTurn == Color.white):
+            self.possible_moves = list()
+            return
+        elif self.settings.ai and (self.whoseTurn == Color.white):
             self.ai_start_turn()
         else:
             self.compute_possible_moves_in_this_turn()
+
+    def mp_enemy_make_move(self):
+        self.end_turn()
 
     def ai_start_turn(self):
         self.threadAI = ThreadAI(self.pieces)
