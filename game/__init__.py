@@ -19,6 +19,14 @@ class Game:
         self.pieces = None
         self.whoseTurn = None
         self.possible_moves = list()
+        self.multiplayer = False
+
+    def start_multiplayer_match(self, network_thread):
+        self.multiplayer = True
+        self.network_thread = network_thread
+        self.end_math()
+        self.start_match()
+        logging.debug("Starting Multiplayer match")
 
     def start_match(self):
         self.pieces = Pieces(self)

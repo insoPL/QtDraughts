@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+    # -*- coding: utf-8 -*-
 
 import logging
 import sys
@@ -11,6 +11,7 @@ from game import Game
 from MainButton import MainButton
 from settings import Settings
 from settingsWindow import SettingsWindow
+from connectionWindow import ConnectionWindow
 
 
 class Main(QMainWindow):
@@ -42,11 +43,10 @@ class Main(QMainWindow):
         self.surrender_button.setDisabled(True)
         self.toolbar.addAction(self.surrender_button)
 
-        # Options
-        options_act = QAction(QIcon('graphics/settings.png'), 'Options', self)
-        options_act.setShortcut('Ctrl+O')
-        options_act.triggered.connect(self.show_settings_window)
-        self.toolbar.addAction(options_act)
+        # Multiplayer
+        self.multiplayer_button = QAction(QIcon('graphics/internet.png'), 'Surrender', self)
+        self.multiplayer_button.triggered.connect(self.establish_internet_connection)
+        self.toolbar.addAction(self.multiplayer_button)
 
         # Blank Space
         spacer_widget = QWidget(self)
@@ -62,6 +62,12 @@ class Main(QMainWindow):
         spacer_widget2 = QWidget(self)
         spacer_widget2.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         self.toolbar.addWidget(spacer_widget2)
+
+        # Options
+        options_act = QAction(QIcon('graphics/settings.png'), 'Options', self)
+        options_act.setShortcut('Ctrl+O')
+        options_act.triggered.connect(self.show_settings_window)
+        self.toolbar.addAction(options_act)
 
         # Exit game
         exit_act = QAction(QIcon('graphics/exit.png'), 'Exit', self)
@@ -102,6 +108,12 @@ class Main(QMainWindow):
             self.surrender_button.setDisabled(True)
             self.game.end_math()
 
+    def establish_internet_connection(self):
+        self.connection_window = ConnectionWindow()
+        self.connection_window.got_connection.connect(self.connection_established)
+
+    def connection_established(self):
+        self.game.start_multiplayer_match(self.connection_window.network_thread)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
