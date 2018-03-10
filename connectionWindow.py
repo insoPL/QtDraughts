@@ -48,7 +48,26 @@ class ConnectionWindow(QWidget):
         return hbox
 
     def host_button_clicked(self):
-        pass
+        if self.network_thread is not None and self.network_thread.isRunning():
+            return
+
+        self.waiting_window = QProgressDialog("Waiting for connection...", "Cancel", 0, 0)
+        self.waiting_window.setWindowTitle("Waiting")
+        self.waiting_window.setWindowFlags(PyQt5.QtCore.Qt.WindowSystemMenuHint)
+        self.waiting_window.show()
+
+        self.network_thread = NetworkThread(self.ip_address.text(), "server")
+
+        self.network_thread.got_connection.connect(self.waiting_window.deleteLater)
+        self.network_thread.got_connection.connect(self.got_connection)
+        self.network_thread.got_connection.connect(self.deleteLater)
+
+        self.network_thread.connection_error.connect(self.connection_error)
+        self.network_thread.connection_error.connect(self.waiting_window.deleteLater)
+
+        self.waiting_window.canceled.connect(self.network_thread.close)
+
+        self.network_thread.start()
 
     def client(self):
         self.ip_address = QLineEdit(socket.gethostbyname(socket.gethostname()))
@@ -75,15 +94,14 @@ class ConnectionWindow(QWidget):
 
         self.network_thread = NetworkThread(self.ip_address.text(), "client")
 
-        self.network_thread.got_connection.connect(self.waiting_window.close)
+        self.network_thread.got_connection.connect(self.waiting_window.deleteLater)
         self.network_thread.got_connection.connect(self.got_connection)
-        self.network_thread.got_connection.connect(self.close)
+        self.network_thread.got_connection.connect(self.deleteLater)
 
         self.network_thread.connection_error.connect(self.connection_error)
-        self.network_thread.connection_error.connect(self.waiting_window.close)
+        self.network_thread.connection_error.connect(self.waiting_window.deleteLater)
 
         self.network_thread.start()
 
     def connection_error(self):
         QMessageBox.warning(self, 'Connection Error', "      Connection Error.      ")
-

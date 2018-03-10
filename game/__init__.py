@@ -85,7 +85,11 @@ class Game:
         else:
             self.compute_possible_moves_in_this_turn()
 
-    def mp_enemy_make_move(self):
+    def mp_enemy_make_move(self, move):
+        piece_cord, dest = move
+        piece = self.pieces.get_piece(piece_cord)
+        piece.cords = dest
+        logging.debug(str(move))
         self.end_turn()
 
     def ai_start_turn(self):
