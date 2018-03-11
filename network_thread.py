@@ -6,18 +6,20 @@ import socket
 
 
 def move_decode(msg):
-    home, dest = msg.split(' ')
-    homex, homey = home.split(",")
-    home = (int(homex), int(homey))
-    destx, desty = dest.split(",")
-    dest = (int(destx), int(desty))
-    return home, dest
+    list_of_cords = msg.split(' ')
+    ret_list = list()
+    for cord in list_of_cords:
+        x,y = cord.split(",")
+        x=int(x)
+        y=int(y)
+        ret_list.append((x,y))
+    return ret_list
 
 
 class NetworkThread(QThread):
     got_connection = pyqtSignal()
     connection_error = pyqtSignal()
-    new_move = pyqtSignal(tuple)
+    new_move = pyqtSignal(list)
 
     def __init__(self, target_ip, mode):
         QThread.__init__(self)
@@ -40,12 +42,15 @@ class NetworkThread(QThread):
                 self.got_connection.emit()
                 self.socket.settimeout(1)
                 while self.running:
-                    msg = self.socket.recv(1024)
-                    msg = msg.decode('ascii')
-                    msg_type, msg = msg.split(chr(30))
-                    logging.debug("new message ["+msg_type+"] "+msg)
-                    if msg_type == "move":
-                        self.new_move.emit(move_decode(msg))
+                    try:
+                        msg = self.socket.recv(1024)
+                        msg = msg.decode('ascii')
+                        msg_type, msg = msg.split(chr(30))
+                        logging.debug("new message [" + msg_type + "] " + msg)
+                        if msg_type == "move":
+                            self.new_move.emit(move_decode(msg))
+                    except socket.timeout:
+                        continue
             except socket.error as err:
                 logging.debug("SOCKET ERROR: %s" % err)
                 self.connection_error.emit()
@@ -76,7 +81,6 @@ class NetworkThread(QThread):
                 self.got_connection.emit()
                 while self.running:
                     try:
-                        logging.debug("rcv")
                         msg = self.socket.recv(1024)
                         msg = msg.decode('ascii')
                         msg_type, msg = msg.split(chr(30))
@@ -95,10 +99,12 @@ class NetworkThread(QThread):
                 self.server_socket.close()
                 logging.debug("Server Closed")
 
-    def send_move(self, piece_cords, dest_cords):
+    def send_move(self, piece_cords, dest_cords, *destroyed_pieces):
         piece_cords_str = "%i,%i"%piece_cords
         dest_cords_str = "%i,%i"%dest_cords
         msg = "move" + chr(30) + piece_cords_str+" "+dest_cords_str
+        for destroyed_piece in destroyed_pieces:
+            msg += " "+"%i,%i"%destroyed_piece
         self.socket.send(msg.encode('ascii'))
 
     def close(self):
