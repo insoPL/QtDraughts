@@ -55,7 +55,7 @@ class ConnectionWindow(QDialog):
         self.waiting_window.setWindowIcon(QIcon('graphics\internet.png'))
         self.waiting_window.setWindowFlags(self.waiting_window.windowFlags() ^ Qt.WindowContextHelpButtonHint)
 
-        self.network_thread = NetworkThread(self.ip_address.text(), "server")
+        self.network_thread = NetworkThread(self.ip_address.text(), self.port.text(), "server")
 
         self.network_thread.got_connection.connect(self.waiting_window.deleteLater)
         self.network_thread.got_connection.connect(self.got_connection)
@@ -97,7 +97,7 @@ class ConnectionWindow(QDialog):
         self.waiting_window.setWindowFlags(self.waiting_window.windowFlags() ^ Qt.WindowContextHelpButtonHint)
         self.waiting_window.setWindowIcon(QIcon('graphics\internet.png'))
 
-        self.network_thread = NetworkThread(self.ip_address.text(), "client")
+        self.network_thread = NetworkThread(self.ip_address.text(), self.port.text(), "client")
 
         self.network_thread.got_connection.connect(self.waiting_window.close)
         self.network_thread.got_connection.connect(self.got_connection)

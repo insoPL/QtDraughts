@@ -22,8 +22,9 @@ class NetworkThread(QThread):
     new_move = pyqtSignal(list)
     special_action = pyqtSignal(str)
 
-    def __init__(self, target_ip, mode):
+    def __init__(self, target_ip, port, mode):
         QThread.__init__(self)
+        self.port = int(port)
         self.mode = mode
         self.target_ip = target_ip
         self.socket = None
@@ -39,7 +40,7 @@ class NetworkThread(QThread):
             logging.info("Connecting to :" + str(self.target_ip))
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             try:
-                self.socket.connect((self.target_ip, 25565))
+                self.socket.connect((self.target_ip, self.port))
                 logging.debug("Connection sucessful")
                 self.got_connection.emit()
                 self.socket.settimeout(1)
@@ -70,7 +71,7 @@ class NetworkThread(QThread):
 
             self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             try:
-                self.server_socket.bind((self.target_ip, 25565))
+                self.server_socket.bind((self.target_ip, self.port))
                 logging.debug("Server ready for connection")
                 self.server_socket.settimeout(1)
                 self.server_socket.listen(1)
