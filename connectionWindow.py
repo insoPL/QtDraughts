@@ -31,18 +31,18 @@ class ConnectionWindow(QDialog):
         self.network_thread = None
 
     def server(self):
-        self.ip_address = QLineEdit(socket.gethostbyname(socket.gethostname()))
+        self.server_ip_address = QLineEdit(socket.gethostbyname(socket.gethostname()))
 
-        self.port = QLineEdit("25565")
-        self.port.setMaximumWidth(80)
+        self.server_port = QLineEdit("25565")
+        self.server_port.setMaximumWidth(80)
 
         host_button = QPushButton("Host")
 
         host_button.clicked.connect(self.host_button_clicked)
 
         hbox = QHBoxLayout()
-        hbox.addWidget(self.ip_address)
-        hbox.addWidget(self.port)
+        hbox.addWidget(self.server_ip_address)
+        hbox.addWidget(self.server_port)
         hbox.addWidget(host_button)
         return hbox
 
@@ -55,7 +55,7 @@ class ConnectionWindow(QDialog):
         self.waiting_window.setWindowIcon(QIcon('graphics\internet.png'))
         self.waiting_window.setWindowFlags(self.waiting_window.windowFlags() ^ Qt.WindowContextHelpButtonHint)
 
-        self.network_thread = NetworkThread(self.ip_address.text(), self.port.text(), "server")
+        self.network_thread = NetworkThread(self.server_ip_address.text(), self.server_port.text(), "server")
 
         self.network_thread.got_connection.connect(self.waiting_window.deleteLater)
         self.network_thread.got_connection.connect(self.got_connection)
@@ -72,19 +72,18 @@ class ConnectionWindow(QDialog):
         self.waiting_window.exec()
 
     def client(self):
-        self.ip_address = QLineEdit(socket.gethostbyname(socket.gethostname()))
-        #ip_address.setPlaceholderText("192.168.1.1")
+        self.client_ip_address = QLineEdit(socket.gethostbyname(socket.gethostname()))
 
-        self.port = QLineEdit("25565")
-        self.port.setMaximumWidth(80)
+        self.client_port = QLineEdit("25565")
+        self.client_port.setMaximumWidth(80)
 
         connect_button = QPushButton("Connect")
 
         connect_button.clicked.connect(self.connect_button_clicked)
 
         hbox = QHBoxLayout()
-        hbox.addWidget(self.ip_address)
-        hbox.addWidget(self.port)
+        hbox.addWidget(self.client_ip_address)
+        hbox.addWidget(self.client_port)
         hbox.addWidget(connect_button)
         return hbox
 
@@ -97,7 +96,7 @@ class ConnectionWindow(QDialog):
         self.waiting_window.setWindowFlags(self.waiting_window.windowFlags() ^ Qt.WindowContextHelpButtonHint)
         self.waiting_window.setWindowIcon(QIcon('graphics\internet.png'))
 
-        self.network_thread = NetworkThread(self.ip_address.text(), self.port.text(), "client")
+        self.network_thread = NetworkThread(self.client_ip_address.text(), self.client_port.text(), "client")
 
         self.network_thread.got_connection.connect(self.waiting_window.close)
         self.network_thread.got_connection.connect(self.got_connection)
