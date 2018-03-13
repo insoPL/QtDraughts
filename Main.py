@@ -93,6 +93,11 @@ class Main(QMainWindow):
             self.game.start_match()
 
     def surrender_button_clicked(self):
+        if self.game.multiplayer:
+            self.game.network_thread.send_special_action("surrender")
+            self.game.end_match()
+            self.game.network_thread.close()
+            return
         msg_box = QMessageBox()
         msg_box.setWindowTitle("Player surrendered")
         msg_box.setText("Do You want to play again?")
@@ -102,15 +107,16 @@ class Main(QMainWindow):
 
     def surrender_button_clicked_answered(self, i):
         if i.text() == "&Yes":
-            self.game.end_math()
+            self.game.end_match()
             self.game.start_match()
         elif i.text() == "&No":
             self.surrender_button.setDisabled(True)
-            self.game.end_math()
+            self.game.end_match()
 
     def establish_internet_connection(self):
         self.connection_window = ConnectionWindow()
         self.connection_window.got_connection.connect(self.connection_established)
+        self.connection_window.exec()
 
     def connection_established(self):
         self.game.start_multiplayer_match(self.connection_window.network_thread)

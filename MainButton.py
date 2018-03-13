@@ -13,7 +13,7 @@ class MainButton(QAction):
     def update(self):
         if self.main_window.game.whoseTurn is None:
             self.setIcon(QIcon('graphics/start.png'))
-        elif self.main_window.game.multiplayer and self.main_window.game.whoseTurn:
+        elif self.main_window.game.multiplayer and self.main_window.game.whoseTurn != self.main_window.game.isHost:
             self.setIcon(QIcon('graphics/internet.png'))
         elif self.main_window.game.settings.ai and self.main_window.game.whoseTurn:
             self.setIcon(QIcon('graphics/computer.png'))

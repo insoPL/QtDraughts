@@ -26,10 +26,12 @@ class Game:
             self.isHost = True
         else:
             self.isHost = False
+
         self.settings.ai = False  # TO DO: sending settings over network
         self.multiplayer = True
         self.network_thread = network_thread
         self.network_thread.new_move.connect(self.mp_enemy_make_move)
+        self.network_thread.special_action.connect(self.mp_enemy_special_action)
 
         self.pieces = Pieces(self)
         self.whoseTurn = Color.white
@@ -37,6 +39,8 @@ class Game:
         if self.isHost:
             self.compute_possible_moves_in_this_turn()
         self.screen.main_button.update()
+
+        self.network_thread.connection_error.connect(self.connection_error)
 
         logging.debug("Starting Multiplayer match")
 
@@ -50,7 +54,7 @@ class Game:
             self.compute_possible_moves_in_this_turn()
         self.screen.main_button.update()
 
-    def end_math(self):
+    def end_match(self):
         self.possible_moves = list()
         self.pieces = None
         self.whoseTurn = None
@@ -92,6 +96,7 @@ class Game:
         self.screen.main_button.update()
         if self.multiplayer and not (self.whoseTurn == self.isHost):
             self.possible_moves = list()
+            self.network_thread.send_special_action("end_turn")
             return
         elif self.settings.ai and (self.whoseTurn == Color.white):
             self.ai_start_turn()
@@ -106,7 +111,14 @@ class Game:
         if len(list_of_moves) > 2:
             for destroyed_piece in list_of_moves[2:]:
                 self.pieces.remove_piece(destroyed_piece)
-        self.end_turn()
+
+    def mp_enemy_special_action(self, command):
+        if command == "end_turn":
+            self.end_turn()
+        elif command == "surrender":
+            self.end_match()
+            self.network_thread.close()
+            QMessageBox.information(self.screen, 'Game Over', "      You Won, network player surrenderd      ")
 
     def ai_start_turn(self):
         self.threadAI = ThreadAI(self.pieces)
@@ -115,7 +127,7 @@ class Game:
 
     def ai_end_turn(self):
         if self.threadAI.best_move is None:
-            self.end_math()
+            self.end_match()
             self.threadAI = None
             QMessageBox.information(self.screen, 'Game Over', "      You Won.      ")
             return
@@ -169,8 +181,16 @@ class Game:
                 ret_list.append(piece.cords)
         self.possible_moves = ret_list
         if not self.possible_moves:
-            self.end_math()
+            self.end_match()
             if self.settings.ai:
                 QMessageBox.information(self.screen, 'Game Over', "You Lost.")
             else:
                 QMessageBox.information(self.screen, 'Game Over', "Player with "+Color.to_str(Color.opposite(self.whoseTurn))+" pieces won.")
+
+    def connection_error(self, err):
+        logging.debug(err)
+        if "10054" in err:
+            QMessageBox.warning(self.screen, 'Connection Error', "      Connection was suddenly closed.      ")
+        else:
+            QMessageBox.warning(self.screen, 'Connection Error', "      Connection Error.      ")
+        self.end_match()
