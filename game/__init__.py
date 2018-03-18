@@ -59,6 +59,8 @@ class Game:
         self.pieces = None
         self.whoseTurn = None
         self.screen.main_button.update()
+        self.multiplayer = False
+        self.screen.surrender_button.setDisabled(True)
 
     def try_to_make_a_move(self, piece, dest_cords):
         if piece.cords in self.possible_moves:
@@ -98,7 +100,7 @@ class Game:
             self.possible_moves = list()
             self.network_thread.send_special_action("end_turn")
             return
-        elif self.settings.ai and (self.whoseTurn == Color.white):
+        elif self.settings.ai and (self.whoseTurn == Color.white) and not self.multiplayer:
             self.ai_start_turn()
         else:
             self.compute_possible_moves_in_this_turn()
@@ -119,6 +121,8 @@ class Game:
             self.end_match()
             self.network_thread.close()
             QMessageBox.information(self.screen, 'Game Over', "      You Won, network player surrenderd      ")
+        elif "[settings]" in command:
+            self.settings.json_import_dump(command[10:])
 
     def ai_start_turn(self):
         self.threadAI = ThreadAI(self.pieces)

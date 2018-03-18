@@ -3,40 +3,37 @@ from tools import Color
 import json
 import logging
 
+list_of_mp_relevant_options = {"multiple_attack", "force_attack", "who_starts"}
+
 
 class Settings:
     def __init__(self, default=False):
-        if default:
-            self.who_starts = Color.white
-            self.force_attack = True
-            self.ai = False
-            self.multiple_attack = True
-            self.always_on_top = False
-        else:
+        self.who_starts = Color.white
+        self.force_attack = True
+        self.ai = False
+        self.multiple_attack = True
+        self.always_on_top = False
+        if not default:
             try:
                 data = open('settings.json')
-                self.__dict__ = json.loads(data.read())
+                self.__dict__.update(json.loads(data.read()))
             except IOError:
-                logging.debug("Could not load setting file. Loading default settings...")
-                self.__init__(default=True)
+                logging.debug("Could not load setting file.")
                 return
-            default_settings = Settings(default=True)
-            for option in default_settings.__dict__.keys():
-                if not hasattr(self, option):
-                    logging.debug("Settings file is lacking option " + str(option))
-                    default_attr = getattr(default_settings, option)
-                    setattr(self, option, default_attr)
-            self_options = list(self.__dict__.keys())
-            for option in self_options:
-                if not hasattr(default_settings, option):
-                    logging.debug("Settings file contains unsupported option " + str(option))
-                    delattr(self, option)
         self.save_settings()
 
-    def json_dump(self):
-        return json.dumps(self, default=lambda o: o.__dict__)
+    def json_import_dump(self, json_dump):
+        self.__dict__.update(json.loads(json_dump))
+
+    def json_dump_for_mp_connection(self):
+        mp_settings = dict()
+
+        for item in list_of_mp_relevant_options:
+            mp_settings[item] = getattr(self, item)
+
+        return json.dumps(mp_settings, default=lambda o: o.__dict__)
 
     def save_settings(self):
         with open('settings.json', 'w') as outfile:
-            json.dump(self.__dict__, outfile, sort_keys=True, indent=4,
-                      ensure_ascii=False)
+            json.dump(self.__dict__, outfile, sort_keys=True, indent=4, ensure_ascii=False)
+        outfile.close()

@@ -44,7 +44,7 @@ class Main(QMainWindow):
         self.toolbar.addAction(self.surrender_button)
 
         # Multiplayer
-        self.multiplayer_button = QAction(QIcon('graphics/internet.png'), 'Surrender', self)
+        self.multiplayer_button = QAction(QIcon('graphics/internet.png'), 'Multiplayer', self)
         self.multiplayer_button.triggered.connect(self.establish_internet_connection)
         self.toolbar.addAction(self.multiplayer_button)
 
@@ -86,7 +86,7 @@ class Main(QMainWindow):
         self.game.update_drawing()
 
     def show_settings_window(self):
-        self.settings_window = SettingsWindow(self.settings)
+        self.settings_window = SettingsWindow(self.settings,mp = self.game.multiplayer)
 
     def start_button_clicked(self):
         if self.game.pieces is None:
@@ -120,6 +120,8 @@ class Main(QMainWindow):
 
     def connection_established(self):
         self.game.start_multiplayer_match(self.connection_window.network_thread)
+        self.connection_window.network_thread.send_special_action("[settings]"+self.settings.json_dump_for_mp_connection())
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
