@@ -3,11 +3,11 @@ from PyQt5.QtWidgets import QVBoxLayout, QWidget, QCheckBox, QGroupBox, QHBoxLay
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
 
-from settings import Settings
+from settings import Settings, list_of_mp_relevant_options
 
 
 class SettingsWindow(QWidget):
-    def __init__(self, settings):
+    def __init__(self, settings, mp=False):
         super().__init__()
         self.setWindowIcon(QIcon('graphics\settings.png'))
         self.settings = settings
@@ -20,12 +20,17 @@ class SettingsWindow(QWidget):
         grid.addLayout(self.cancel_accept_buttons())
         self.setLayout(grid)
 
+        if mp:
+            for name, checkBox in self.check_boxes:
+                if name in list_of_mp_relevant_options:
+                    checkBox.setDisabled(True)
+
         self.setWindowTitle("Settings")
         self.resize(400, 300)
         self.show()
 
     def create_game_rules_group(self):
-        group_box = QGroupBox("game Rules")
+        group_box = QGroupBox("Game Rules")
         vbox = QVBoxLayout()
 
         self.check_boxes = list()

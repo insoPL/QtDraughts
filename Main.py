@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+    # -*- coding: utf-8 -*-
 
 import logging
 import sys
@@ -11,6 +11,7 @@ from game import Game
 from MainButton import MainButton
 from settings import Settings
 from settingsWindow import SettingsWindow
+from connectionWindow import ConnectionWindow
 
 
 class Main(QMainWindow):
@@ -42,11 +43,10 @@ class Main(QMainWindow):
         self.surrender_button.setDisabled(True)
         self.toolbar.addAction(self.surrender_button)
 
-        # Options
-        options_act = QAction(QIcon('graphics/settings.png'), 'Options', self)
-        options_act.setShortcut('Ctrl+O')
-        options_act.triggered.connect(self.show_settings_window)
-        self.toolbar.addAction(options_act)
+        # Multiplayer
+        self.multiplayer_button = QAction(QIcon('graphics/internet.png'), 'Multiplayer', self)
+        self.multiplayer_button.triggered.connect(self.establish_internet_connection)
+        self.toolbar.addAction(self.multiplayer_button)
 
         # Blank Space
         spacer_widget = QWidget(self)
@@ -62,6 +62,12 @@ class Main(QMainWindow):
         spacer_widget2 = QWidget(self)
         spacer_widget2.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         self.toolbar.addWidget(spacer_widget2)
+
+        # Options
+        options_act = QAction(QIcon('graphics/settings.png'), 'Options', self)
+        options_act.setShortcut('Ctrl+O')
+        options_act.triggered.connect(self.show_settings_window)
+        self.toolbar.addAction(options_act)
 
         # Exit game
         exit_act = QAction(QIcon('graphics/exit.png'), 'Exit', self)
@@ -80,13 +86,18 @@ class Main(QMainWindow):
         self.game.update_drawing()
 
     def show_settings_window(self):
-        self.settings_window = SettingsWindow(self.settings)
+        self.settings_window = SettingsWindow(self.settings,mp = self.game.multiplayer)
 
     def start_button_clicked(self):
         if self.game.pieces is None:
             self.game.start_match()
 
     def surrender_button_clicked(self):
+        if self.game.multiplayer:
+            self.game.network_thread.send_special_action("surrender")
+            self.game.end_match()
+            self.game.network_thread.close()
+            return
         msg_box = QMessageBox()
         msg_box.setWindowTitle("Player surrendered")
         msg_box.setText("Do You want to play again?")
@@ -96,11 +107,20 @@ class Main(QMainWindow):
 
     def surrender_button_clicked_answered(self, i):
         if i.text() == "&Yes":
-            self.game.end_math()
+            self.game.end_match()
             self.game.start_match()
         elif i.text() == "&No":
             self.surrender_button.setDisabled(True)
-            self.game.end_math()
+            self.game.end_match()
+
+    def establish_internet_connection(self):
+        self.connection_window = ConnectionWindow()
+        self.connection_window.got_connection.connect(self.connection_established)
+        self.connection_window.exec()
+
+    def connection_established(self):
+        self.game.start_multiplayer_match(self.connection_window.network_thread)
+        self.connection_window.network_thread.send_special_action("[settings]"+self.settings.json_dump_for_mp_connection())
 
 
 if __name__ == '__main__':
