@@ -16,8 +16,11 @@ class Connection(QObject):
         self.networkThread = None
         self.passwd = None
 
-    def start(self):
-        pass
+    def start(self, ip_address, port, passwd):
+        self.passwd = passwd
+        self.networkThread.got_connection.connect(self.got_connection)
+        self.networkThread.connection_error.connect(self.connection_error)
+        self.networkThread.new_msg.connect(self._new_msg)
 
     def __bool__(self):
         if self.networkThread is None:
