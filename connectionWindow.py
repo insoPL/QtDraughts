@@ -4,7 +4,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtCore import pyqtSignal, Qt
 
-from connection import Connection
+from Network import Server, Client
 
 import logging
 import socket
@@ -27,7 +27,7 @@ class ConnectionWindow(QDialog):
         self.setLayout(grid)
 
         self.waiting_window = None
-        self.connection = Connection()
+        self.connection = None
 
     def server(self):
         self.server_ip_address = QLineEdit(socket.gethostbyname(socket.gethostname()))
@@ -48,8 +48,9 @@ class ConnectionWindow(QDialog):
     def host_button_clicked(self):
         if self.connection:
             return
+        self.connection = Server()
 
-        self.waiting_window = QProgressDialog("Waiting for connection...", "Cancel", 0, 0)
+        self.waiting_window = QProgressDialog("Waiting for Network...", "Cancel", 0, 0)
         self.waiting_window.setWindowTitle("Waiting")
         self.waiting_window.setWindowIcon(QIcon('graphics\internet.png'))
         self.waiting_window.setWindowFlags(self.waiting_window.windowFlags() ^ Qt.WindowContextHelpButtonHint)
@@ -63,7 +64,7 @@ class ConnectionWindow(QDialog):
 
         self.waiting_window.canceled.connect(self.connection.close)
 
-        self.connection.host(self.server_ip_address.text(), self.server_port.text())
+        self.connection.start(self.server_ip_address.text(), self.server_port.text())
         self.waiting_window.exec()
 
     def client(self):
@@ -85,6 +86,7 @@ class ConnectionWindow(QDialog):
     def connect_button_clicked(self):
         if self.connection:
             return
+        self.connection = Client()
 
         self.waiting_window = QProgressDialog("Waiting for server...", "Cancel", 0, 0)
         self.waiting_window.setWindowTitle("Connecting")
@@ -98,7 +100,7 @@ class ConnectionWindow(QDialog):
         self.connection.connection_error.connect(self.connection_error)
         self.connection.connection_error.connect(self.waiting_window.deleteLater)
 
-        self.connection.connect_to(self.client_ip_address.text(), self.client_port.text())
+        self.connection.start(self.client_ip_address.text(), self.client_port.text())
         self.waiting_window.exec()
 
     def connection_error(self, err):
