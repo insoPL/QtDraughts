@@ -21,17 +21,17 @@ class Game:
         self.possible_moves = list()
         self.multiplayer = False
 
-    def start_multiplayer_match(self, network_thread):
-        if network_thread.mode == "server":
+    def start_multiplayer_match(self, connection):
+        if connection.networkThread.mode == "server":
             self.isHost = True
         else:
             self.isHost = False
 
         self.settings.ai = False  # TO DO: sending settings over network
         self.multiplayer = True
-        self.network_thread = network_thread
-        self.network_thread.new_move.connect(self.mp_enemy_make_move)
-        self.network_thread.special_action.connect(self.mp_enemy_special_action)
+        self.connection = connection
+        self.connection.new_move.connect(self.mp_enemy_make_move)
+        self.connection.special_action.connect(self.mp_enemy_special_action)
 
         self.pieces = Pieces(self)
         self.whoseTurn = Color.white
@@ -40,7 +40,7 @@ class Game:
             self.compute_possible_moves_in_this_turn()
         self.screen.main_button.update()
 
-        self.network_thread.connection_error.connect(self.connection_error)
+        self.connection.connection_error.connect(self.connection_error)
 
         logging.debug("Starting Multiplayer match")
 
@@ -77,7 +77,7 @@ class Game:
         for possible_dest_cord, possible_destroyed_piece in possible_moves.items():
             if possible_dest_cord == dest_cords:
                 if self.multiplayer:
-                    self.network_thread.send_move(piece.cords, dest_cords)
+                    self.connection.send_move(piece.cords, dest_cords)
                 piece.cords = dest_cords
                 return True
         return False
@@ -87,7 +87,7 @@ class Game:
         for possible_dest_cord, possible_destroyed_piece in possible_attacks.items():
             if possible_dest_cord == dest_cords:
                 if self.multiplayer:
-                    self.network_thread.send_move(piece.cords, dest_cords, possible_destroyed_piece)
+                    self.connection.send_move(piece.cords, dest_cords, possible_destroyed_piece)
                 self.pieces.remove_piece(possible_destroyed_piece)
                 piece.cords = dest_cords
                 return True
@@ -98,7 +98,7 @@ class Game:
         self.screen.main_button.update()
         if self.multiplayer and not (self.whoseTurn == self.isHost):
             self.possible_moves = list()
-            self.network_thread.send_special_action("end_turn")
+            self.connection.send_special_action("end_turn")
             return
         elif self.settings.ai and (self.whoseTurn == Color.white) and not self.multiplayer:
             self.ai_start_turn()
@@ -119,7 +119,7 @@ class Game:
             self.end_turn()
         elif command == "surrender":
             self.end_match()
-            self.network_thread.close()
+            self.connection.close()
             QMessageBox.information(self.screen, 'Game Over', "      You Won, network player surrenderd      ")
         elif "[settings]" in command:
             self.settings.json_import_dump(command[10:])

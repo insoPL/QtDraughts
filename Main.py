@@ -1,4 +1,4 @@
-    # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 import logging
 import sys
@@ -8,7 +8,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QAction, qApp, QApplication, QWidget, QSizePolicy, QMessageBox
 
 from game import Game
-from MainButton import MainButton
+from mainButton import MainButton
 from settings import Settings
 from settingsWindow import SettingsWindow
 from connectionWindow import ConnectionWindow
@@ -94,9 +94,9 @@ class Main(QMainWindow):
 
     def surrender_button_clicked(self):
         if self.game.multiplayer:
-            self.game.network_thread.send_special_action("surrender")
+            self.game.connection.send_special_action("surrender")
             self.game.end_match()
-            self.game.network_thread.close()
+            self.game.connection.close()
             return
         msg_box = QMessageBox()
         msg_box.setWindowTitle("Player surrendered")
@@ -119,8 +119,8 @@ class Main(QMainWindow):
         self.connection_window.exec()
 
     def connection_established(self):
-        self.game.start_multiplayer_match(self.connection_window.network_thread)
-        self.connection_window.network_thread.send_special_action("[settings]"+self.settings.json_dump_for_mp_connection())
+        self.game.start_multiplayer_match(self.connection_window.connection)
+        self.connection_window.connection.send_special_action("[settings]"+self.settings.json_dump_for_mp_connection())
 
 
 if __name__ == '__main__':

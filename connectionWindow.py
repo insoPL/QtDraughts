@@ -4,8 +4,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtCore import pyqtSignal, Qt
 
-
-from network_thread import NetworkThread
+from connection import Connection
 
 import logging
 import socket
@@ -28,7 +27,7 @@ class ConnectionWindow(QDialog):
         self.setLayout(grid)
 
         self.waiting_window = None
-        self.network_thread = None
+        self.connection = Connection()
 
     def server(self):
         self.server_ip_address = QLineEdit(socket.gethostbyname(socket.gethostname()))
@@ -47,7 +46,7 @@ class ConnectionWindow(QDialog):
         return hbox
 
     def host_button_clicked(self):
-        if self.network_thread is not None and self.network_thread.isRunning():
+        if self.connection:
             return
 
         self.waiting_window = QProgressDialog("Waiting for connection...", "Cancel", 0, 0)
@@ -55,20 +54,16 @@ class ConnectionWindow(QDialog):
         self.waiting_window.setWindowIcon(QIcon('graphics\internet.png'))
         self.waiting_window.setWindowFlags(self.waiting_window.windowFlags() ^ Qt.WindowContextHelpButtonHint)
 
-        self.network_thread = NetworkThread(self.server_ip_address.text(), self.server_port.text(), "server")
+        self.connection.got_connection.connect(self.waiting_window.deleteLater)
+        self.connection.got_connection.connect(self.got_connection)
+        self.connection.got_connection.connect(self.deleteLater)
 
-        self.network_thread.got_connection.connect(self.waiting_window.deleteLater)
-        self.network_thread.got_connection.connect(self.got_connection)
-        self.network_thread.got_connection.connect(self.deleteLater)
+        self.connection.connection_error.connect(self.connection_error)
+        self.connection.connection_error.connect(self.waiting_window.deleteLater)
 
+        self.waiting_window.canceled.connect(self.connection.close)
 
-        self.network_thread.connection_error.connect(self.connection_error)
-        self.network_thread.connection_error.connect(self.waiting_window.deleteLater)
-
-        self.waiting_window.canceled.connect(self.network_thread.close)
-
-        self.network_thread.start()
-
+        self.connection.host(self.server_ip_address.text(), self.server_port.text())
         self.waiting_window.exec()
 
     def client(self):
@@ -88,7 +83,7 @@ class ConnectionWindow(QDialog):
         return hbox
 
     def connect_button_clicked(self):
-        if self.network_thread is not None and self.network_thread.isRunning():
+        if self.connection:
             return
 
         self.waiting_window = QProgressDialog("Waiting for server...", "Cancel", 0, 0)
@@ -96,16 +91,14 @@ class ConnectionWindow(QDialog):
         self.waiting_window.setWindowFlags(self.waiting_window.windowFlags() ^ Qt.WindowContextHelpButtonHint)
         self.waiting_window.setWindowIcon(QIcon('graphics\internet.png'))
 
-        self.network_thread = NetworkThread(self.client_ip_address.text(), self.client_port.text(), "client")
+        self.connection.got_connection.connect(self.waiting_window.close)
+        self.connection.got_connection.connect(self.got_connection)
+        self.connection.got_connection.connect(self.deleteLater)
 
-        self.network_thread.got_connection.connect(self.waiting_window.close)
-        self.network_thread.got_connection.connect(self.got_connection)
-        self.network_thread.got_connection.connect(self.deleteLater)
+        self.connection.connection_error.connect(self.connection_error)
+        self.connection.connection_error.connect(self.waiting_window.deleteLater)
 
-        self.network_thread.connection_error.connect(self.connection_error)
-        self.network_thread.connection_error.connect(self.waiting_window.deleteLater)
-
-        self.network_thread.start()
+        self.connection.connect_to(self.client_ip_address.text(), self.client_port.text())
         self.waiting_window.exec()
 
     def connection_error(self, err):

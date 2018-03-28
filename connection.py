@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt5.QtCore import QThread, pyqtSignal, QObject
 import logging
 import socket
 
@@ -16,11 +16,68 @@ def move_decode(msg):
     return ret_list
 
 
-class NetworkThread(QThread):
+class Connection(QObject):
     got_connection = pyqtSignal()
     connection_error = pyqtSignal(str)
     new_move = pyqtSignal(list)
     special_action = pyqtSignal(str)
+    close = pyqtSignal()
+
+    def __init__(self):
+        super().__init__()
+        self.networkThread = None
+
+    def host(self, ip_address, port):
+        self.networkThread = _NetworkThread(ip_address, port, "server")
+        self.connect_signals()
+        self.networkThread.start()
+
+    def connect_to(self, ip_address, port):
+        self.networkThread = _NetworkThread(ip_address, port, "client")
+        self.connect_signals()
+        self.networkThread.start()
+
+    def connect_signals(self):
+        self.networkThread.got_connection.connect(self.got_connection)
+        self.networkThread.connection_error.connect(self.connection_error)
+        self.networkThread.new_msg.connect(self.new_msg)
+
+    def __bool__(self):
+        if self.networkThread is None:
+            return False
+        if not self.networkThread.isRunning():
+            return False
+        return True
+
+    def new_msg(self, msg):
+        msg_type, msg = msg.split(chr(30))
+        logging.debug("new message [" + msg_type + "] " + msg)
+        if msg_type == "move":
+            self.new_move.emit(move_decode(msg))
+        elif msg_type == "action":
+            self.special_action.emit(msg)
+
+    def send_move(self, piece_cords, dest_cords, *destroyed_pieces):
+        piece_cords_str = "%i,%i"%piece_cords
+        dest_cords_str = "%i,%i"%dest_cords
+        msg = "move" + chr(30) + piece_cords_str+" "+dest_cords_str
+        for destroyed_piece in destroyed_pieces:
+            msg += " "+"%i,%i"%destroyed_piece
+        self.networkThread.socket.send(msg.encode('ascii'))
+
+    def send_special_action(self, string):
+        msg = "action" + chr(30) + string
+        self.networkThread.socket.send(msg.encode('ascii'))
+
+    def close(self):
+        logging.debug("NetworkThread close signal")
+        self.networkThread.running = False
+
+
+class _NetworkThread(QThread):
+    got_connection = pyqtSignal()
+    connection_error = pyqtSignal(str)
+    new_msg = pyqtSignal(str)
 
     def __init__(self, target_ip, port, mode):
         QThread.__init__(self)
@@ -50,12 +107,7 @@ class NetworkThread(QThread):
                         msg = msg.decode('ascii')
                         if msg == "":
                             break
-                        msg_type, msg = msg.split(chr(30))
-                        logging.debug("new message [" + msg_type + "] " + msg)
-                        if msg_type == "move":
-                            self.new_move.emit(move_decode(msg))
-                        elif msg_type == "action":
-                            self.special_action.emit(msg)
+                        self.new_msg.emit(msg)
                     except socket.timeout:
                         continue
             except socket.error as err:
@@ -93,12 +145,7 @@ class NetworkThread(QThread):
                         msg = msg.decode('ascii')
                         if msg == "":
                             break
-                        msg_type, msg = msg.split(chr(30))
-                        logging.debug("new message [" + msg_type + "] " + msg)
-                        if msg_type == "move":
-                            self.new_move.emit(move_decode(msg))
-                        elif msg_type == "action":
-                            self.special_action.emit(msg)
+                        self.new_msg.emit(msg)
                     except socket.timeout:
                         continue
             except socket.error as err:
@@ -112,20 +159,4 @@ class NetworkThread(QThread):
                 if self.server_socket is not None:
                     self.server_socket.close()
                 logging.debug("Server Closed")
-
-    def send_move(self, piece_cords, dest_cords, *destroyed_pieces):
-        piece_cords_str = "%i,%i"%piece_cords
-        dest_cords_str = "%i,%i"%dest_cords
-        msg = "move" + chr(30) + piece_cords_str+" "+dest_cords_str
-        for destroyed_piece in destroyed_pieces:
-            msg += " "+"%i,%i"%destroyed_piece
-        self.socket.send(msg.encode('ascii'))
-
-    def send_special_action(self, string):
-        msg = "action" + chr(30) + string
-        self.socket.send(msg.encode('ascii'))
-
-    def close(self):
-        logging.debug("NetworkThread close signal")
-        self.running = False
 

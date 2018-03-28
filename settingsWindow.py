@@ -21,9 +21,9 @@ class SettingsWindow(QWidget):
         self.setLayout(grid)
 
         if mp:
-            for name, checkBox in self.vbox_elements:
+            for name, item in self.vbox_elements.items():
                 if name in list_of_mp_relevant_options:
-                    checkBox.setDisabled(True)
+                    item.setDisabled(True)
 
         self.setWindowTitle("Settings")
         self.resize(400, 300)
