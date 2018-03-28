@@ -14,6 +14,7 @@ class Settings:
         self.ai = False
         self.multiple_attack = True
         self.always_on_top = False
+        self.ai_difficulty = 3
         if not default:
             try:
                 data = open('settings.json')

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from PyQt5.QtWidgets import QVBoxLayout, QWidget, QCheckBox, QGroupBox, QHBoxLayout, QPushButton
+from PyQt5.QtWidgets import QVBoxLayout, QWidget, QCheckBox, QGroupBox, QHBoxLayout, QPushButton, QSlider
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
 
@@ -21,7 +21,7 @@ class SettingsWindow(QWidget):
         self.setLayout(grid)
 
         if mp:
-            for name, checkBox in self.check_boxes:
+            for name, checkBox in self.vbox_elements:
                 if name in list_of_mp_relevant_options:
                     checkBox.setDisabled(True)
 
@@ -33,18 +33,32 @@ class SettingsWindow(QWidget):
         group_box = QGroupBox("Game Rules")
         vbox = QVBoxLayout()
 
-        self.check_boxes = list()
-        self.check_boxes.append(("force_attack", QCheckBox("If attack is possible force player to attack.")))
-        self.check_boxes.append(("multiple_attack", QCheckBox("Multiple attacks of one piece in the turn.")))
-        self.check_boxes.append(("ai", QCheckBox("Computer enemy.")))
-        self.check_boxes.append(("who_starts", QCheckBox("White pieces start the game.")))
-        self.check_boxes.append(("always_on_top", QCheckBox("Windows will be always on top. (Requires manual restart)")))
+        self.vbox_elements = dict()
+        self.vbox_elements["force_attack"] = QCheckBox("If attack is possible force player to attack.")
+        self.vbox_elements["multiple_attack"] = QCheckBox("Multiple attacks of one piece in the turn.")
+        self.vbox_elements["who_starts"] = QCheckBox("White pieces start the game.")
+        self.vbox_elements["always_on_top"] = QCheckBox("Windows will be always on top. (Requires manual restart)")
+        self.vbox_elements["ai"] = QCheckBox("Computer enemy, choose difficulty:")
+        self.vbox_elements["ai_difficulty"] = QSlider(Qt.Horizontal)
 
-        for name, checkBox in self.check_boxes:
-            checkBox.setChecked(getattr(self.settings, name))
-            vbox.addWidget(checkBox)
+        for name, item in self.vbox_elements.items():
+            if isinstance(item, QCheckBox):
+                item.setChecked(getattr(self.settings, name))
+            elif isinstance(item, QSlider):
+                item.setValue(getattr(self.settings, name))
+            vbox.addWidget(item)
+
+        self.vbox_elements["ai_difficulty"].setTickInterval(1)
+        self.vbox_elements["ai_difficulty"].setRange(1,5)
+        self.vbox_elements["ai"].clicked.connect(self.update_slider)
+        self.update_slider()
+
         group_box.setLayout(vbox)
         return group_box
+
+    def update_slider(self):
+        foo = not self.vbox_elements["ai"].isChecked()
+        self.vbox_elements["ai_difficulty"].setDisabled(foo)
 
     def cancel_accept_buttons(self):
         accept_button = QPushButton("Accept")
@@ -63,12 +77,19 @@ class SettingsWindow(QWidget):
         return hbox
 
     def save_and_quit(self):
-        for name, checkBox in self.check_boxes:
-            setattr(self.settings, name, checkBox.isChecked())
+        for name, item in self.vbox_elements.items():
+            if isinstance(item, QCheckBox):
+                setattr(self.settings, name, item.isChecked())
+            elif isinstance(item, QSlider):
+                setattr(self.settings, name, item.value())
         self.settings.save_settings()
         self.close()
 
     def back_to_defaults(self):
         default_settings = Settings(True)
-        for name, checkBox in self.check_boxes:
-            checkBox.setChecked(getattr(default_settings, name))
+        for name, item in self.vbox_elements.items():
+            if isinstance(item, QCheckBox):
+                item.setChecked(getattr(default_settings, name))
+            elif isinstance(item, QSlider):
+                item.setValue(getattr(default_settings, name))
+        self.update_slider()
