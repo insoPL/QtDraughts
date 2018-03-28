@@ -125,7 +125,7 @@ class Game:
             self.settings.json_import_dump(command[10:])
 
     def ai_start_turn(self):
-        self.threadAI = ThreadAI(self.pieces)
+        self.threadAI = ThreadAI(self.pieces, self.settings)
         self.threadAI.finished_calculation.connect(self.ai_end_turn)
         self.threadAI.start()
 

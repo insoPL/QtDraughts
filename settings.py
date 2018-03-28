@@ -3,6 +3,7 @@ from tools import Color
 import json
 import logging
 
+# attrs from list will be send when mp session will be established
 list_of_mp_relevant_options = {"multiple_attack", "force_attack", "who_starts"}
 
 
@@ -20,7 +21,7 @@ class Settings:
             except IOError:
                 logging.debug("Could not load setting file.")
                 return
-        self.save_settings()
+            self.save_settings()
 
     def json_import_dump(self, json_dump):
         self.__dict__.update(json.loads(json_dump))

@@ -5,23 +5,23 @@ import random
 import math
 
 
-def find_all_possible_moves(lista_bialych, lista_czarnych, color):
+def find_all_possible_moves(list_of_white_pieces, list_of_black_pieces, color, settings):
     all_possible_moves = list()
 
     if color == Color.black:
-        list_of_my_pieces = lista_czarnych
+        list_of_my_pieces = list_of_black_pieces
     elif color == Color.white:
-        list_of_my_pieces = lista_bialych
+        list_of_my_pieces = list_of_white_pieces
     else:
         raise ValueError("Color: " + str(color))
 
     for foo in list_of_my_pieces:
-        possible_moves_foo = possible_attacks(foo, lista_bialych, lista_czarnych)
+        possible_moves_foo = possible_attacks(foo, list_of_white_pieces, list_of_black_pieces)
         for move in possible_moves_foo.items():
             all_possible_moves.append((foo, move[0], move[1]))
-    if len(all_possible_moves) == 0:
+    if not all_possible_moves or not settings.force_attack:
         for foo in list_of_my_pieces:
-            possible_moves_foo = possible_moves(foo, lista_bialych, lista_czarnych)
+            possible_moves_foo = possible_moves(foo, list_of_white_pieces, list_of_black_pieces)
             for move in possible_moves_foo.items():
                 all_possible_moves.append((foo, move[0], move[1]))
     return all_possible_moves

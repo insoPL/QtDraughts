@@ -6,8 +6,9 @@ from .AI import ai
 class ThreadAI(QThread):
     finished_calculation = pyqtSignal()
 
-    def __init__(self, pieces):
+    def __init__(self, pieces, settings):
         self.pieces = pieces
+        self.settings = settings
         QThread.__init__(self)
         self.best_move = None
 
@@ -15,7 +16,7 @@ class ThreadAI(QThread):
         self.wait()
 
     def run(self):
-        self.best_move = ai(*self.pieces.two_lists)
+        self.best_move = ai(*self.pieces.two_lists, settings=self.settings)
 
         self.finished_calculation.emit()
 

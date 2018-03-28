@@ -3,36 +3,37 @@
 from .ai_tools import *
 
 
-def ai(list_of_white_pieces, list_of_black_pieces):
-    list_of_beaten_pieces = list()
+def ai(list_of_white_pieces, list_of_black_pieces, settings):
     all_possible_moves_with_score = list()
-    all_possible_moves = find_all_possible_moves(list_of_white_pieces, list_of_black_pieces, Color.black)
+    all_possible_moves = find_all_possible_moves(list_of_white_pieces, list_of_black_pieces, Color.black, settings)
     for piece_cords, target_pos_cords, beaten_piece_cords in all_possible_moves:
+        list_of_beaten_pieces = list()
         new_list_of_black_pieces = move_piece_on_list(list_of_black_pieces, piece_cords, target_pos_cords)
         if beaten_piece_cords != 0:
             new_list_of_white_pieces = remove_piece_from_list(list_of_white_pieces, beaten_piece_cords)
-            target_pos_cords, list_of_beaten_pieces = _ai_rek_another_attack_in_a_row(new_list_of_white_pieces,
-                                                                                      new_list_of_black_pieces,
-                                                                                      Color.black, target_pos_cords)
-            for beaten_piece in list_of_beaten_pieces:
-                new_list_of_white_pieces = remove_piece_from_list(new_list_of_white_pieces, beaten_piece)
+            if settings.multiple_attack:
+                target_pos_cords, list_of_beaten_pieces = _ai_rek_another_attack_in_a_row(new_list_of_white_pieces,
+                                                                                          new_list_of_black_pieces,
+                                                                                          Color.black, target_pos_cords)
+                for beaten_piece in list_of_beaten_pieces:
+                    new_list_of_white_pieces = remove_piece_from_list(new_list_of_white_pieces, beaten_piece)
             list_of_beaten_pieces.append(beaten_piece_cords)
         else:
             new_list_of_white_pieces = list_of_white_pieces
         deep = 5
-        score = _ai_rek(new_list_of_white_pieces, new_list_of_black_pieces, 1, deep)
+        score = _ai_rek(new_list_of_white_pieces, new_list_of_black_pieces, 1, settings, deep)
         all_possible_moves_with_score.append((piece_cords, target_pos_cords, score, list_of_beaten_pieces))
         # logging.debug("[AI] It's possible to move %s -> %s with score %s", str(piece_cords), str(target_pos_cords), str(list_of_beaten_pieces))
     return the_best_move(all_possible_moves_with_score)
 
 
-def _ai_rek(list_of_white_pieces, list_of_black_pieces, color_of_active_side, depth_limiter):
+def _ai_rek(list_of_white_pieces, list_of_black_pieces, color_of_active_side, settings, depth_limiter):
     min_max_value = None
     if depth_limiter == 0:
         return len(list_of_black_pieces) - len(list_of_white_pieces)
     depth_limiter -= 1
 
-    all_possible_moves = find_all_possible_moves(list_of_white_pieces, list_of_black_pieces, color_of_active_side)
+    all_possible_moves = find_all_possible_moves(list_of_white_pieces, list_of_black_pieces, color_of_active_side, settings)
 
     if len(all_possible_moves) == 0:
         return len(list_of_black_pieces) - len(list_of_white_pieces)
@@ -42,15 +43,17 @@ def _ai_rek(list_of_white_pieces, list_of_black_pieces, color_of_active_side, de
             new_list_of_black_pieces = move_piece_on_list(list_of_black_pieces, piece_cords, target_pos_cords)
             if beaten_piece_cords != 0:
                 new_list_of_white_pieces = remove_piece_from_list(list_of_white_pieces, beaten_piece_cords)
-                target_pos_cords, list_of_beaten_pieces = _ai_rek_another_attack_in_a_row(new_list_of_white_pieces,
-                                                                                          new_list_of_black_pieces,
-                                                                                          color_of_active_side,
-                                                                                          target_pos_cords)
-                for foo in list_of_beaten_pieces:
-                    new_list_of_white_pieces = remove_piece_from_list(new_list_of_white_pieces, foo)
+
+                if settings.multiple_attack:
+                    target_pos_cords, list_of_beaten_pieces = _ai_rek_another_attack_in_a_row(new_list_of_white_pieces,
+                                                                                              new_list_of_black_pieces,
+                                                                                              color_of_active_side,
+                                                                                              target_pos_cords)
+                    for foo in list_of_beaten_pieces:
+                        new_list_of_white_pieces = remove_piece_from_list(new_list_of_white_pieces, foo)
             else:
                 new_list_of_white_pieces = list_of_white_pieces
-            score = _ai_rek(new_list_of_white_pieces, new_list_of_black_pieces, not color_of_active_side, depth_limiter)
+            score = _ai_rek(new_list_of_white_pieces, new_list_of_black_pieces, not color_of_active_side, settings, depth_limiter)
             min_max_value = max_score(min_max_value, score)
     elif color_of_active_side == Color.white:
         for piece_cords, target_pos_cords, beaten_piece_cords in all_possible_moves:
@@ -65,7 +68,7 @@ def _ai_rek(list_of_white_pieces, list_of_black_pieces, color_of_active_side, de
                     new_list_of_black_pieces = remove_piece_from_list(new_list_of_black_pieces, foo)
             else:
                 new_list_of_black_pieces = list_of_black_pieces
-            score = _ai_rek(new_list_of_white_pieces, new_list_of_black_pieces, Color.black, depth_limiter)
+            score = _ai_rek(new_list_of_white_pieces, new_list_of_black_pieces, Color.black, settings, depth_limiter)
             min_max_value = min_score(min_max_value, score)
     return min_max_value
 
