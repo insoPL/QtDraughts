@@ -3,6 +3,9 @@
 import socket
 from PyQt5.QtCore import QThread, pyqtSignal
 import logging
+import nacl.utils
+import nacl.secret
+import nacl.hash
 
 
 class _NetworkThread(QThread):
@@ -18,6 +21,21 @@ class _NetworkThread(QThread):
         self.socket = None
         self.running = True
         self.server_socket = None
+        passwd = "12345"
+        keyhash = nacl.hash.blake2b(passwd.encode('ascii'), digest_size=16)
+        self.secret_box = nacl.secret.SecretBox(keyhash)
+
+    def send_raw(self, msg):
+        # logging.debug("[raw network pocket send] "+msg)
+        msg = self.secret_box.encrypt(msg.encode('ascii'))
+        self.socket.send(msg)
+
+    def recive_raw(self):
+        msg = self.socket.recv(1024)
+        msg = self.secret_box.decrypt(msg)
+        msg = msg.decode('ascii')
+        # logging.debug("[raw network pocket recived] "+msg)
+        return msg
 
     def __del__(self):
         self.quit()
@@ -32,12 +50,15 @@ class NetworkClient(_NetworkThread):
         try:
             self.socket.connect((self.target_ip, self.port))
             logging.debug("Connection sucessful")
+
+            if self.recive_raw() != "welcome":  self.close()
+            self.send_raw("welcomeback")
+
             self.got_connection.emit()
             self.socket.settimeout(1)
             while self.running:
                 try:
-                    msg = self.socket.recv(1024)
-                    msg = msg.decode('ascii')
+                    msg = self.recive_raw()
                     if msg == "":
                         break
                     self.new_msg.emit(msg)
@@ -72,13 +93,16 @@ class NetworkServer(_NetworkThread):
             if not self.running:
                 logging.debug("Hosting canceled")
                 return
-            logging.debug("Connection sucessful")
+            logging.debug("Connection established.")
+
+            self.send_raw("welcome")
+            if self.recive_raw() != "welcomeback": self.close()
+
             self.got_connection.emit()
             self.socket.settimeout(1)
             while self.running:
                 try:
-                    msg = self.socket.recv(1024)
-                    msg = msg.decode('ascii')
+                    msg = self.recive_raw()
                     if msg == "":
                         break
                     self.new_msg.emit(msg)

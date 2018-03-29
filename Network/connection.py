@@ -43,15 +43,16 @@ class Connection(QObject):
         msg = "move" + chr(30) + piece_cords_str+" "+dest_cords_str
         for destroyed_piece in destroyed_pieces:
             msg += " "+"%i,%i"%destroyed_piece
-        self.networkThread.socket.send(msg.encode('ascii'))
+        self.networkThread.send_raw(msg)
 
     def send_special_action(self, string):
         msg = "action" + chr(30) + string
-        self.networkThread.socket.send(msg.encode('ascii'))
+        self.networkThread.send_raw(msg)
 
     def close(self):
         logging.debug("NetworkThread close signal")
         self.networkThread.running = False
+
 
 def _move_decode(msg):
     list_of_cords = msg.split(' ')
@@ -62,4 +63,3 @@ def _move_decode(msg):
         y = int(y)
         ret_list.append((x, y))
     return ret_list
-
