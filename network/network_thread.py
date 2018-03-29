@@ -13,7 +13,7 @@ class _NetworkThread(QThread):
     connection_error = pyqtSignal(str)
     new_msg = pyqtSignal(str)
 
-    def __init__(self, target_ip, port):
+    def __init__(self, target_ip, port, passwd):
         QThread.__init__(self)
         self.port = int(port)
         self.mode = None
@@ -21,7 +21,6 @@ class _NetworkThread(QThread):
         self.socket = None
         self.running = True
         self.server_socket = None
-        passwd = "12345"
         keyhash = nacl.hash.blake2b(passwd.encode('ascii'), digest_size=16)
         self.secret_box = nacl.secret.SecretBox(keyhash)
 
@@ -81,7 +80,7 @@ class NetworkServer(_NetworkThread):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             self.server_socket.bind((self.target_ip, self.port))
-            logging.debug("Server ready for Network")
+            logging.debug("Server ready for network")
             self.server_socket.settimeout(1)
             self.server_socket.listen(1)
             while self.running:

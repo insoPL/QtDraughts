@@ -4,7 +4,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtCore import pyqtSignal, Qt
 
-from Network import Server, Client
+from network import Server, Client
 
 import logging
 import socket
@@ -35,6 +35,8 @@ class ConnectionWindow(QDialog):
         self.server_port = QLineEdit("25565")
         self.server_port.setMaximumWidth(80)
 
+        self.server_password = QLineEdit("password")
+
         host_button = QPushButton("Host")
 
         host_button.clicked.connect(self.host_button_clicked)
@@ -42,6 +44,7 @@ class ConnectionWindow(QDialog):
         hbox = QHBoxLayout()
         hbox.addWidget(self.server_ip_address)
         hbox.addWidget(self.server_port)
+        hbox.addWidget(self.server_password)
         hbox.addWidget(host_button)
         return hbox
 
@@ -50,7 +53,7 @@ class ConnectionWindow(QDialog):
             return
         self.connection = Server()
 
-        self.waiting_window = QProgressDialog("Waiting for Network...", "Cancel", 0, 0)
+        self.waiting_window = QProgressDialog("Waiting for network...", "Cancel", 0, 0)
         self.waiting_window.setWindowTitle("Waiting")
         self.waiting_window.setWindowIcon(QIcon('graphics\internet.png'))
         self.waiting_window.setWindowFlags(self.waiting_window.windowFlags() ^ Qt.WindowContextHelpButtonHint)
@@ -64,7 +67,7 @@ class ConnectionWindow(QDialog):
 
         self.waiting_window.canceled.connect(self.connection.close)
 
-        self.connection.start(self.server_ip_address.text(), self.server_port.text())
+        self.connection.start(self.server_ip_address.text(), self.server_port.text(), self.server_password.text())
         self.waiting_window.exec()
 
     def client(self):
@@ -73,6 +76,8 @@ class ConnectionWindow(QDialog):
         self.client_port = QLineEdit("25565")
         self.client_port.setMaximumWidth(80)
 
+        self.client_password = QLineEdit("password")
+
         connect_button = QPushButton("Connect")
 
         connect_button.clicked.connect(self.connect_button_clicked)
@@ -80,6 +85,7 @@ class ConnectionWindow(QDialog):
         hbox = QHBoxLayout()
         hbox.addWidget(self.client_ip_address)
         hbox.addWidget(self.client_port)
+        hbox.addWidget(self.client_password)
         hbox.addWidget(connect_button)
         return hbox
 
@@ -100,7 +106,7 @@ class ConnectionWindow(QDialog):
         self.connection.connection_error.connect(self.connection_error)
         self.connection.connection_error.connect(self.waiting_window.deleteLater)
 
-        self.connection.start(self.client_ip_address.text(), self.client_port.text())
+        self.connection.start(self.client_ip_address.text(), self.client_port.text(), self.client_password.text())
         self.waiting_window.exec()
 
     def connection_error(self, err):
