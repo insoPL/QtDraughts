@@ -6,6 +6,7 @@ import logging
 import nacl.utils
 import nacl.secret
 import nacl.hash
+from nacl.exceptions import CryptoError
 
 
 class _NetworkThread(QThread):
@@ -31,7 +32,13 @@ class _NetworkThread(QThread):
 
     def recive_raw(self):
         msg = self.socket.recv(1024)
-        msg = self.secret_box.decrypt(msg)
+        try:
+            msg = self.secret_box.decrypt(msg)
+        except CryptoError:
+            #self.connection_error.emit("Wrong password")
+            #self.running = False
+            return ""
+
         msg = msg.decode('ascii')
         # logging.debug("[raw network pocket recived] "+msg)
         return msg
@@ -50,7 +57,9 @@ class NetworkClient(_NetworkThread):
             self.socket.connect((self.target_ip, self.port))
             logging.debug("Connection sucessful")
 
-            if self.recive_raw() != "welcome":  self.close()
+            if self.recive_raw() != "welcome":
+                self.connection_error.emit("Wrong Password")
+                return
             self.send_raw("welcomeback")
 
             self.got_connection.emit()
@@ -95,7 +104,9 @@ class NetworkServer(_NetworkThread):
             logging.debug("Connection established.")
 
             self.send_raw("welcome")
-            if self.recive_raw() != "welcomeback": self.close()
+            if self.recive_raw() != "welcomeback":
+                self.connection_error.emit("Wrong Password")
+                return
 
             self.got_connection.emit()
             self.socket.settimeout(1)
@@ -111,7 +122,7 @@ class NetworkServer(_NetworkThread):
             logging.debug("SOCKET ERROR: %s" % err)
             self.server_socket.close()
             self.server_socket = None
-            self.connection_error.emit(str(err))
+            self.connection_error.emit("Connection error.")
         finally:
             if self.socket is not None:
                 self.socket.close()

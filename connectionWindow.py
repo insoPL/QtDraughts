@@ -110,5 +110,4 @@ class ConnectionWindow(QDialog):
         self.waiting_window.exec()
 
     def connection_error(self, err):
-        logging.debug(err)
-        QMessageBox.warning(self, 'Connection Error', "      Connection Error.      ")
+        QMessageBox.warning(self, 'Connection Error', "      "+err+"      ")
