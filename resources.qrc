@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>graphics/black.png</file>
+        <file>graphics/computer.png</file>
+        <file>graphics/exit.png</file>
+        <file>graphics/icon.ico</file>
+        <file>graphics/internet.png</file>
+        <file>graphics/light_gray.png</file>
+        <file>graphics/settings.png</file>
+        <file>graphics/start.png</file>
+        <file>graphics/surrender.png</file>
+    </qresource>
+</RCC>

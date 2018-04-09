@@ -16,7 +16,7 @@ class ConnectionWindow(QDialog):
     def __init__(self):
         super().__init__()
         self.setWindowFlags(self.windowFlags() ^ Qt.WindowContextHelpButtonHint)
-        self.setWindowIcon(QIcon('graphics\internet.png'))
+        self.setWindowIcon(QIcon(':/graphics\internet.png'))
         self.setWindowTitle("Multiplayer")
         self.resize(400, 300)
 
@@ -55,7 +55,7 @@ class ConnectionWindow(QDialog):
 
         self.waiting_window = QProgressDialog("Waiting for network...", "Cancel", 0, 0)
         self.waiting_window.setWindowTitle("Waiting")
-        self.waiting_window.setWindowIcon(QIcon('graphics\internet.png'))
+        self.waiting_window.setWindowIcon(QIcon(':/graphics\internet.png'))
         self.waiting_window.setWindowFlags(self.waiting_window.windowFlags() ^ Qt.WindowContextHelpButtonHint)
 
         self.connection.got_connection.connect(self.waiting_window.deleteLater)
@@ -97,7 +97,7 @@ class ConnectionWindow(QDialog):
         self.waiting_window = QProgressDialog("Waiting for server...", "Cancel", 0, 0)
         self.waiting_window.setWindowTitle("Connecting")
         self.waiting_window.setWindowFlags(self.waiting_window.windowFlags() ^ Qt.WindowContextHelpButtonHint)
-        self.waiting_window.setWindowIcon(QIcon('graphics\internet.png'))
+        self.waiting_window.setWindowIcon(QIcon(':/graphics\internet.png'))
 
         self.connection.got_connection.connect(self.waiting_window.close)
         self.connection.got_connection.connect(self.got_connection)

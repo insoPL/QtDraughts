@@ -1,2 +1,2 @@
-pyinstaller --onefile --windowed --icon=graphics\icon.ico main.py --name QtDraughts
-xcopy /Y /E /I graphics dist\graphics
+pyrcc5 resources.qrc > resources_rc.py
+pyinstaller QtDraughts.spec

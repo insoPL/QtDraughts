@@ -7,6 +7,7 @@ from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QAction, qApp, QApplication, QWidget, QSizePolicy, QMessageBox
 
+import resources_rc
 from game import Game
 from mainButton import MainButton
 from settings import Settings
@@ -20,7 +21,7 @@ class Main(QMainWindow):
 
         logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
         logging.debug("Initialization...")
-        self.setWindowIcon(QIcon('graphics\start.png'))
+        self.setWindowIcon(QIcon(":/graphics/start.png"))
         self.settings = Settings()
         self.game = Game(self, self.settings)
         self.init_ui()
@@ -38,13 +39,13 @@ class Main(QMainWindow):
         self.toolbar.setIconSize(QSize(28, 28))
 
         # Surrender
-        self.surrender_button = QAction(QIcon('graphics/surrender.png'), 'Surrender', self)
+        self.surrender_button = QAction(QIcon(':/graphics/surrender.png'), 'Surrender', self)
         self.surrender_button.triggered.connect(self.surrender_button_clicked)
         self.surrender_button.setDisabled(True)
         self.toolbar.addAction(self.surrender_button)
 
         # Multiplayer
-        self.multiplayer_button = QAction(QIcon('graphics/internet.png'), 'Multiplayer', self)
+        self.multiplayer_button = QAction(QIcon(':/graphics/internet.png'), 'Multiplayer', self)
         self.multiplayer_button.triggered.connect(self.establish_internet_connection)
         self.toolbar.addAction(self.multiplayer_button)
 
@@ -64,13 +65,13 @@ class Main(QMainWindow):
         self.toolbar.addWidget(spacer_widget2)
 
         # Options
-        options_act = QAction(QIcon('graphics/settings.png'), 'Options', self)
+        options_act = QAction(QIcon(':/graphics/settings.png'), 'Options', self)
         options_act.setShortcut('Ctrl+O')
         options_act.triggered.connect(self.show_settings_window)
         self.toolbar.addAction(options_act)
 
         # Exit game
-        exit_act = QAction(QIcon('graphics/exit.png'), 'Exit', self)
+        exit_act = QAction(QIcon(':/graphics/exit.png'), 'Exit', self)
         exit_act.setShortcut('Ctrl+Q')
         exit_act.triggered.connect(qApp.quit)
 
@@ -125,5 +126,6 @@ class Main(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = Main()
+    w = Main()
+    w.show()
     sys.exit(app.exec_())

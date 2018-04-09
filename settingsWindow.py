@@ -9,7 +9,7 @@ from settings import Settings, list_of_mp_relevant_options
 class SettingsWindow(QWidget):
     def __init__(self, settings, mp=False):
         super().__init__()
-        self.setWindowIcon(QIcon('graphics\settings.png'))
+        self.setWindowIcon(QIcon(':/graphics\settings.png'))
         self.settings = settings
         if self.settings.always_on_top:
             self.setWindowFlags(Qt.WindowStaysOnTopHint)
