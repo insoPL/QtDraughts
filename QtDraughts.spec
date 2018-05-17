@@ -2,9 +2,11 @@
 
 block_cipher = None
 
+icon_path = 'graphics\\icon.ico'
+full_name = 'QtDraughts'
 
 a = Analysis(['main.py'],
-             pathex=['C:\\Users\\�ukasz\\PycharmProjects\\QtDraughts'],
+             pathex=[],
              binaries=[],
              datas=[],
              hiddenimports=['_cffi_backend'],
@@ -21,11 +23,23 @@ exe = EXE(pyz,
           a.binaries,
           a.zipfiles,
           a.datas,
-          name='QtDraughts',
+          name=full_name,
           debug=False,
           onefile=True,
           windowed=True,
           strip=False,
           upx=True,
           runtime_tmpdir=None,
-          console=False , icon='graphics\\icon.ico')
+          console=False,
+          icon=icon_path)
+coll = COLLECT(exe,
+               a.binaries,
+               a.zipfiles,
+               a.datas,
+               strip=False,
+               upx=True,
+               name='draug')
+app = BUNDLE(coll,
+             name=full_name+'.app',
+             icon=icon_path,
+             bundle_identifier = 'com.insoPL.'+full_name )
