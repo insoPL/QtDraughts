@@ -2,10 +2,10 @@
 
 block_cipher = None
 
-icon_path = 'graphics\\icon.ico'
+icon_path = 'src\\graphics\\icon.ico'
 full_name = 'QtDraughts'
 
-a = Analysis(['main.py'],
+a = Analysis(['src\\main.py'],
              pathex=[],
              binaries=[],
              datas=[],

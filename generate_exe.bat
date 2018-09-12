@@ -1,2 +1,2 @@
-pyrcc5 resources.qrc > resources_rc.py
+pyrcc5 src/sources.qrc > src/resources_rc.py
 pyinstaller QtDraughts.spec
