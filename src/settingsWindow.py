@@ -27,7 +27,6 @@ class SettingsWindow(QWidget):
 
         self.setWindowTitle("Settings")
         self.resize(400, 300)
-        self.show()
 
     def create_game_rules_group(self):
         group_box = QGroupBox("Game Rules")

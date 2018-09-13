@@ -16,24 +16,35 @@ from connectionWindow import ConnectionWindow
 
 
 class Main(QMainWindow):
+    """
+    Main Window of program. \n
+    Inherits: :class:`PyQt5.QtWidgets.QMainWindow`
+    """
     def __init__(self):
         super().__init__()
 
         logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
         logging.debug("Initialization...")
-        self.setWindowIcon(QIcon(":/graphics/start.png"))
+
         self.settings = Settings()
         self.game = Game(self, self.settings)
         self.init_ui()
 
+        logging.info("Game Ready!")
+
+    def init_ui(self):
+        """
+        Initialize user interface in Main Window. Intended to use only inside constructor.
+        """
+
         if self.settings.always_on_top:
             self.setWindowFlags(Qt.WindowStaysOnTopHint)
 
-        self.show()
+        self.setWindowIcon(QIcon(":/graphics/start.png"))
+        self.setMinimumSize(300, 300)
+        self.setWindowTitle('Draughts')
 
-        logging.info("game Ready!")
-
-    def init_toolbar(self):
+        # Initialize Toolbar
         self.toolbar = self.addToolBar("Bar")
         self.toolbar.setMovable(False)
         self.toolbar.setIconSize(QSize(28, 28))
@@ -56,7 +67,7 @@ class Main(QMainWindow):
 
         # Main Button
         self.main_button = MainButton(self)
-        self.main_button.triggered.connect(self.start_button_clicked)
+        self.main_button.triggered.connect(self.main_button_clicked)
         self.toolbar.addAction(self.main_button)
 
         # Blank Space
@@ -77,23 +88,35 @@ class Main(QMainWindow):
 
         self.toolbar.addAction(exit_act)
 
-    def init_ui(self):
-        self.setMinimumSize(300, 300)
-        self.setWindowTitle('Draughts')
-        self.init_toolbar()
-
     # noinspection PyUnusedLocal
     def paintEvent(self, e):
+        """
+        Overwrites method from :class:`PyQt5.QtWidgets.QMainWindow`
+        """
         self.game.update_drawing()
 
     def show_settings_window(self):
+        """
+        Shows QWidget with settings window :class:`settingsWindow.SettingsWindow`
+        Function called on option_act trigger event.
+        """
         self.settings_window = SettingsWindow(self.settings,mp = self.game.multiplayer)
+        self.settings_window.show()
 
-    def start_button_clicked(self):
+    def main_button_clicked(self):
+        """
+        Starts game.
+        Function called on main_button trigger event.
+        main_button is in the middle of toolbar.
+        """
         if self.game.pieces is None:
             self.game.start_match()
 
     def surrender_button_clicked(self):
+        """
+        Shows :class:`QMessageBox` to check if user didn't make misclick.
+        Function called on surrender_button trigger event.
+        """
         if self.game.multiplayer:
             self.game.connection.send_special_action("surrender")
             self.game.end_match()
@@ -107,6 +130,10 @@ class Main(QMainWindow):
         msg_box.exec_()
 
     def surrender_button_clicked_answered(self, i):
+        """
+        Surrenders the game.
+        Function called from msg_box inside :func:`surrender_button_clicked`
+        """
         if i.text() == "&Yes":
             self.game.end_match()
             self.game.start_match()
@@ -115,11 +142,19 @@ class Main(QMainWindow):
             self.game.end_match()
 
     def establish_internet_connection(self):
+        """
+        Shows QWidget with host/connect options :class:`connectionWindow.ConnectionWindow`
+        Function called on multiplayer_button trigger event.
+        """
         self.connection_window = ConnectionWindow()
         self.connection_window.got_connection.connect(self.connection_established)
         self.connection_window.exec()
 
     def connection_established(self):
+        """
+        Starts multiplayer match and sends settings dump to other side.
+        Called after successful connection established in :class:`connectionWindow.ConnectionWindow`
+        """
         self.game.start_multiplayer_match(self.connection_window.connection)
         self.connection_window.connection.send_special_action("[settings]"+self.settings.json_dump_for_mp_connection())
 
