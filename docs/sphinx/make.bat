@@ -8,7 +8,7 @@ if "%SPHINXBUILD%" == "" (
 	set SPHINXBUILD=sphinx-build
 )
 set SOURCEDIR=.
-set BUILDDIR=../docs
+set BUILDDIR=..
 set SPHINXPROJ=QtDraughts
 
 if "%1" == "" goto help
