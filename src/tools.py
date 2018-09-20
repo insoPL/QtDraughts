@@ -117,6 +117,7 @@ def str_to_cords(str_board: str):
         if y % 2 == 0:
             continue
         line = str_board[y]
+        line = line.lstrip()
 
         y-=1
         y/=2
@@ -143,3 +144,60 @@ def str_to_cords(str_board: str):
         list_of_white_pieces.extend(remove_letter('w'))
 
     return list_of_white_pieces, list_of_black_pieces
+
+
+class Move:
+    """
+    New class intended to replace old way of storing 'move' data
+    Old way of storing 'move' was a tuple - (cords, dest, destroyed)
+    where:
+        cords - cords of moving piece
+        dest - destination cords
+        destroyed - list of cords of destroyed pieces
+    """
+    def __init__(self, cords:tuple, dest:tuple, destroyed:list):
+        assert isinstance(cords, tuple)
+        assert isinstance(dest, tuple)
+        assert isinstance(destroyed, list)
+        self.cords = cords
+        self.dest = dest
+        self.destroyed = destroyed
+
+
+class ListOfPieces:
+    """
+    New class intended to replace old way of storing info about pieces
+    Old way of storing was a tuple two_pieces - (black_pieces, white_pieces)
+    where:
+        black_pieces - list of cords of black pieces
+        white_pieces - list of cords of white pieces
+    """
+    def __init__(self, black_pieces: list, white_pieces: list):
+        assert isinstance(black_pieces, list)
+        assert isinstance(white_pieces, list)
+
+        self.black_pieces = black_pieces
+        self.white_pieces = white_pieces
+
+    def apply_move(self, move: Move):
+        """
+        Applies Move to ListOfPieces.
+        Works in place
+
+        :param Move move: move to be applied
+        """
+        if move.cords in self.black_pieces:
+            self.black_pieces.remove(move.cords)
+            self.black_pieces.append(move.dest)
+        elif move.cords in self.white_pieces:
+            self.white_pieces.remove(move.cords)
+            self.white_pieces.append(move.dest)
+        else:
+            raise ValueError
+        for destroyed_piece in move.destroyed:
+            if destroyed_piece in self.white_pieces:
+                self.white_pieces.remove(destroyed_piece)
+            elif destroyed_piece in self.black_pieces:
+                self.black_pieces.remove(destroyed_piece)
+            else:
+                raise ValueError
