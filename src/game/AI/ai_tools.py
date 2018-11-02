@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from tools import Color, NoPossibleMove
+from tools import Color
 from game.game_logic import possible_moves, possible_attacks
 import random
 import math
