@@ -1,0 +1,315 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>tools &#8212; QtDraughts 1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for tools</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+
+<div class="viewcode-block" id="Color"><a class="viewcode-back" href="../tools.html#tools.Color">[docs]</a><span class="k">class</span> <span class="nc">Color</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Static Enum class used form marking colors of pieces</span>
+
+<span class="sd">    In main program values are stored as int. This class is used only as static enum class to make code cleaner and</span>
+<span class="sd">    to avoid magic numbers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">black</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">white</span> <span class="o">=</span> <span class="mi">1</span>
+
+<div class="viewcode-block" id="Color.to_str"><a class="viewcode-back" href="../tools.html#tools.Color.to_str">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">to_str</span><span class="p">(</span><span class="n">color</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Changes color to readable string</span>
+
+<span class="sd">        :param int color: value representing color</span>
+<span class="sd">        :return: name of color</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">color</span> <span class="o">==</span> <span class="n">Color</span><span class="o">.</span><span class="n">white</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;white&quot;</span>
+        <span class="k">elif</span> <span class="n">color</span> <span class="o">==</span> <span class="n">Color</span><span class="o">.</span><span class="n">black</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;black&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">color</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Color.opposite"><a class="viewcode-back" href="../tools.html#tools.Color.opposite">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">opposite</span><span class="p">(</span><span class="n">color</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">|        Returns opposite color.</span>
+
+<span class="sd">        :param int color: value representing color</span>
+<span class="sd">        :return: opposite color</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">color</span> <span class="o">==</span> <span class="n">Color</span><span class="o">.</span><span class="n">white</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Color</span><span class="o">.</span><span class="n">black</span>
+        <span class="k">elif</span> <span class="n">color</span> <span class="o">==</span> <span class="n">Color</span><span class="o">.</span><span class="n">black</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Color</span><span class="o">.</span><span class="n">white</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">color</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="cords_list_to_str"><a class="viewcode-back" href="../tools.html#tools.cords_list_to_str">[docs]</a><span class="k">def</span> <span class="nf">cords_list_to_str</span><span class="p">(</span><span class="n">list_of_white_pieces</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">list_of_black_pieces</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates nice looking string to visalize list of cords on the board,</span>
+<span class="sd">    usefull for debugging and tests</span>
+
+<span class="sd">    :param list list_of_white_pieces: list of cords of white pieces</span>
+<span class="sd">    :param list list_of_black_pieces: list of cords of black pieces</span>
+<span class="sd">    :return: str_board</span>
+<span class="sd">    :rtype: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">empty_board</span> <span class="o">=</span> <span class="p">[</span>
+         <span class="s1">&#39;+---------------+&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;| | | | | | | | |&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;|-+-+-+-+-+-+-+-+&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;| | | | | | | | |&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;|-+-+-+-+-+-+-+-+&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;| | | | | | | | |&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;|-+-+-+-+-+-+-+-+&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;| | | | | | | | |&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;|-+-+-+-+-+-+-+-+&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;| | | | | | | | |&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;|-+-+-+-+-+-+-+-+&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;| | | | | | | | |&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;|-+-+-+-+-+-+-+-+&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;| | | | | | | | |&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;|-+-+-+-+-+-+-+-+&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;| | | | | | | | |&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;+---------------+&#39;</span><span class="p">]</span>
+
+    <span class="n">list_of_pieces</span> <span class="o">=</span> <span class="n">list_of_black_pieces</span> <span class="o">+</span> <span class="n">list_of_white_pieces</span>
+
+    <span class="k">for</span> <span class="n">cord</span> <span class="ow">in</span> <span class="n">list_of_pieces</span><span class="p">:</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">cord</span>
+
+        <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">*</span><span class="mi">2</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="mi">15</span><span class="o">-</span><span class="n">y</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">*</span><span class="mi">2</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">+</span><span class="mi">1</span>
+
+        <span class="n">line</span> <span class="o">=</span> <span class="n">empty_board</span><span class="p">[</span><span class="n">y</span><span class="p">]</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">cord</span> <span class="ow">in</span> <span class="n">list_of_white_pieces</span><span class="p">:</span>
+            <span class="n">line</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;w&#39;</span>
+        <span class="k">elif</span> <span class="n">cord</span> <span class="ow">in</span> <span class="n">list_of_black_pieces</span><span class="p">:</span>
+            <span class="n">line</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;b&#39;</span>
+
+        <span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="n">empty_board</span><span class="p">[</span><span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="n">line</span>
+
+    <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">empty_board</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="str_to_cords"><a class="viewcode-back" href="../tools.html#tools.str_to_cords">[docs]</a><span class="k">def</span> <span class="nf">str_to_cords</span><span class="p">(</span><span class="n">str_board</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates list od cords out of string visual representation.</span>
+<span class="sd">    Does opposite of :func:`cords_list_to_str`</span>
+
+<span class="sd">    :param str str_board: string with visual representation of board</span>
+<span class="sd">    :return two lists of pieces</span>
+<span class="sd">    :rtype: tuple</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">list_of_white_pieces</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">list_of_black_pieces</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="n">str_board</span> <span class="o">=</span> <span class="n">str_board</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">y</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">str_board</span><span class="p">[</span><span class="n">y</span><span class="p">]</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span>
+
+        <span class="n">y</span><span class="o">-=</span><span class="mi">1</span>
+        <span class="n">y</span><span class="o">/=</span><span class="mi">2</span>
+        <span class="n">y</span><span class="o">-=</span><span class="mi">7</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">y</span><span class="o">=</span><span class="nb">abs</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+
+        <span class="n">line</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">remove_letter</span><span class="p">(</span><span class="n">letter</span><span class="p">):</span>
+            <span class="n">ret_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="k">while</span> <span class="n">letter</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">letter</span><span class="p">)</span>
+                <span class="n">line</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span>
+
+                <span class="n">index</span><span class="o">-=</span><span class="mi">1</span>
+                <span class="n">index</span><span class="o">/=</span><span class="mi">2</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+                <span class="n">ret_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">index</span><span class="p">,</span><span class="n">y</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">ret_list</span>
+
+        <span class="n">list_of_black_pieces</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">remove_letter</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">))</span>
+        <span class="n">list_of_white_pieces</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">remove_letter</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">list_of_white_pieces</span><span class="p">,</span> <span class="n">list_of_black_pieces</span></div>
+
+
+<div class="viewcode-block" id="Move"><a class="viewcode-back" href="../tools.html#tools.Move">[docs]</a><span class="k">class</span> <span class="nc">Move</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    New class intended to replace old way of storing &#39;move&#39; data</span>
+<span class="sd">    Old way of storing &#39;move&#39; was a tuple - (cords, dest, destroyed)</span>
+<span class="sd">    where:</span>
+<span class="sd">        cords - cords of moving piece</span>
+<span class="sd">        dest - destination cords</span>
+<span class="sd">        destroyed - list of cords of destroyed pieces</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cords</span><span class="p">:</span><span class="nb">tuple</span><span class="p">,</span> <span class="n">dest</span><span class="p">:</span><span class="nb">tuple</span><span class="p">,</span> <span class="n">destroyed</span><span class="p">:</span><span class="nb">list</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cords</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dest</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">destroyed</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cords</span> <span class="o">=</span> <span class="n">cords</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dest</span> <span class="o">=</span> <span class="n">dest</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">destroyed</span> <span class="o">=</span> <span class="n">destroyed</span></div>
+
+
+<div class="viewcode-block" id="ListOfPieces"><a class="viewcode-back" href="../tools.html#tools.ListOfPieces">[docs]</a><span class="k">class</span> <span class="nc">ListOfPieces</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    New class intended to replace old way of storing info about pieces</span>
+<span class="sd">    Old way of storing was a tuple two_pieces - (black_pieces, white_pieces)</span>
+<span class="sd">    where:</span>
+<span class="sd">        black_pieces - list of cords of black pieces</span>
+<span class="sd">        white_pieces - list of cords of white pieces</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">black_pieces</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">white_pieces</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">black_pieces</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">white_pieces</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">black_pieces</span> <span class="o">=</span> <span class="n">black_pieces</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">white_pieces</span> <span class="o">=</span> <span class="n">white_pieces</span>
+
+<div class="viewcode-block" id="ListOfPieces.apply_move"><a class="viewcode-back" href="../tools.html#tools.ListOfPieces.apply_move">[docs]</a>    <span class="k">def</span> <span class="nf">apply_move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">move</span><span class="p">:</span> <span class="n">Move</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Applies Move to ListOfPieces.</span>
+<span class="sd">        Works in place</span>
+
+<span class="sd">        :param Move move: move to be applied</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">move</span><span class="o">.</span><span class="n">cords</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">black_pieces</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">black_pieces</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">move</span><span class="o">.</span><span class="n">cords</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">black_pieces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">move</span><span class="o">.</span><span class="n">dest</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">move</span><span class="o">.</span><span class="n">cords</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">white_pieces</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">white_pieces</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">move</span><span class="o">.</span><span class="n">cords</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">white_pieces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">move</span><span class="o">.</span><span class="n">dest</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span>
+        <span class="k">for</span> <span class="n">destroyed_piece</span> <span class="ow">in</span> <span class="n">move</span><span class="o">.</span><span class="n">destroyed</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">destroyed_piece</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">white_pieces</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">white_pieces</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">destroyed_piece</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">destroyed_piece</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">black_pieces</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">black_pieces</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">destroyed_piece</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">QtDraughts</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Main.html">Main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../connectionWindow.html">connectionWindow module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../game.html">game package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mainButton.html">mainButton module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../network.html">network package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../settings.html">settings module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../settingsWindow.html">settingsWindow module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools.html">tools module</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, InsoPL.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

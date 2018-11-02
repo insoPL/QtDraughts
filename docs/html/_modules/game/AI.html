@@ -1,0 +1,225 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>game.AI &#8212; QtDraughts 1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for game.AI</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">.ai_tools</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<div class="viewcode-block" id="ai"><a class="viewcode-back" href="../../game.AI.html#game.AI.ai">[docs]</a><span class="k">def</span> <span class="nf">ai</span><span class="p">(</span><span class="n">list_of_white_pieces</span><span class="p">,</span> <span class="n">list_of_black_pieces</span><span class="p">,</span> <span class="n">settings</span><span class="p">):</span>
+
+    <span class="n">all_possible_moves_with_score</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">all_possible_moves</span> <span class="o">=</span> <span class="n">find_all_possible_moves</span><span class="p">(</span><span class="n">list_of_white_pieces</span><span class="p">,</span> <span class="n">list_of_black_pieces</span><span class="p">,</span> <span class="n">Color</span><span class="o">.</span><span class="n">black</span><span class="p">,</span> <span class="n">settings</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">all_possible_moves</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">ai_difficulty</span><span class="o">&lt;</span><span class="mi">4</span> <span class="ow">and</span> <span class="n">settings</span><span class="o">.</span><span class="n">ai_difficulty</span><span class="o">&lt;</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">):</span>
+        <span class="n">piece_cords</span><span class="p">,</span> <span class="n">target_pos_cords</span><span class="p">,</span> <span class="n">beaten_piece_cords</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">all_possible_moves</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">beaten_piece_cords</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">piece_cords</span><span class="p">,</span> <span class="n">target_pos_cords</span><span class="p">,</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">piece_cords</span><span class="p">,</span> <span class="n">target_pos_cords</span><span class="p">,</span> <span class="p">[</span><span class="n">beaten_piece_cords</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">piece_cords</span><span class="p">,</span> <span class="n">target_pos_cords</span><span class="p">,</span> <span class="n">beaten_piece_cords</span> <span class="ow">in</span> <span class="n">all_possible_moves</span><span class="p">:</span>
+        <span class="n">list_of_beaten_pieces</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">new_list_of_black_pieces</span> <span class="o">=</span> <span class="n">move_piece_on_list</span><span class="p">(</span><span class="n">list_of_black_pieces</span><span class="p">,</span> <span class="n">piece_cords</span><span class="p">,</span> <span class="n">target_pos_cords</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">beaten_piece_cords</span><span class="p">:</span>
+            <span class="n">new_list_of_white_pieces</span> <span class="o">=</span> <span class="n">remove_piece_from_list</span><span class="p">(</span><span class="n">list_of_white_pieces</span><span class="p">,</span> <span class="n">beaten_piece_cords</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">multiple_attack</span><span class="p">:</span>
+                <span class="n">target_pos_cords</span><span class="p">,</span> <span class="n">list_of_beaten_pieces</span> <span class="o">=</span> <span class="n">_ai_rek_another_attack_in_a_row</span><span class="p">(</span><span class="n">new_list_of_white_pieces</span><span class="p">,</span>
+                                                                                          <span class="n">new_list_of_black_pieces</span><span class="p">,</span>
+                                                                                          <span class="n">Color</span><span class="o">.</span><span class="n">black</span><span class="p">,</span> <span class="n">target_pos_cords</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">beaten_piece</span> <span class="ow">in</span> <span class="n">list_of_beaten_pieces</span><span class="p">:</span>
+                    <span class="n">new_list_of_white_pieces</span> <span class="o">=</span> <span class="n">remove_piece_from_list</span><span class="p">(</span><span class="n">new_list_of_white_pieces</span><span class="p">,</span> <span class="n">beaten_piece</span><span class="p">)</span>
+            <span class="n">list_of_beaten_pieces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">beaten_piece_cords</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_list_of_white_pieces</span> <span class="o">=</span> <span class="n">list_of_white_pieces</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="n">_ai_rek</span><span class="p">(</span><span class="n">new_list_of_white_pieces</span><span class="p">,</span> <span class="n">new_list_of_black_pieces</span><span class="p">,</span> <span class="n">Color</span><span class="o">.</span><span class="n">white</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">ai_difficulty</span><span class="p">)</span>
+        <span class="n">all_possible_moves_with_score</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">piece_cords</span><span class="p">,</span> <span class="n">target_pos_cords</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">list_of_beaten_pieces</span><span class="p">))</span>
+        <span class="c1"># logging.debug(&quot;[AI] It&#39;s possible to move %s -&gt; %s with score %s&quot;, str(piece_cords), str(target_pos_cords), str(list_of_beaten_pieces))</span>
+    <span class="k">return</span> <span class="n">the_best_move</span><span class="p">(</span><span class="n">all_possible_moves_with_score</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_ai_rek</span><span class="p">(</span><span class="n">list_of_white_pieces</span><span class="p">,</span> <span class="n">list_of_black_pieces</span><span class="p">,</span> <span class="n">color_of_active_side</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">depth_limiter</span><span class="p">):</span>
+    <span class="n">min_max_value</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">depth_limiter</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_of_black_pieces</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_of_white_pieces</span><span class="p">)</span>
+    <span class="n">depth_limiter</span> <span class="o">-=</span> <span class="mi">1</span>
+
+    <span class="n">all_possible_moves</span> <span class="o">=</span> <span class="n">find_all_possible_moves</span><span class="p">(</span><span class="n">list_of_white_pieces</span><span class="p">,</span> <span class="n">list_of_black_pieces</span><span class="p">,</span> <span class="n">color_of_active_side</span><span class="p">,</span> <span class="n">settings</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">all_possible_moves</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_of_black_pieces</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_of_white_pieces</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">color_of_active_side</span> <span class="o">==</span> <span class="n">Color</span><span class="o">.</span><span class="n">black</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">piece_cords</span><span class="p">,</span> <span class="n">target_pos_cords</span><span class="p">,</span> <span class="n">beaten_piece_cords</span> <span class="ow">in</span> <span class="n">all_possible_moves</span><span class="p">:</span>
+            <span class="n">new_list_of_black_pieces</span> <span class="o">=</span> <span class="n">move_piece_on_list</span><span class="p">(</span><span class="n">list_of_black_pieces</span><span class="p">,</span> <span class="n">piece_cords</span><span class="p">,</span> <span class="n">target_pos_cords</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">beaten_piece_cords</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">new_list_of_white_pieces</span> <span class="o">=</span> <span class="n">remove_piece_from_list</span><span class="p">(</span><span class="n">list_of_white_pieces</span><span class="p">,</span> <span class="n">beaten_piece_cords</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">multiple_attack</span><span class="p">:</span>
+                    <span class="n">target_pos_cords</span><span class="p">,</span> <span class="n">list_of_beaten_pieces</span> <span class="o">=</span> <span class="n">_ai_rek_another_attack_in_a_row</span><span class="p">(</span><span class="n">new_list_of_white_pieces</span><span class="p">,</span>
+                                                                                              <span class="n">new_list_of_black_pieces</span><span class="p">,</span>
+                                                                                              <span class="n">color_of_active_side</span><span class="p">,</span>
+                                                                                              <span class="n">target_pos_cords</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">foo</span> <span class="ow">in</span> <span class="n">list_of_beaten_pieces</span><span class="p">:</span>
+                        <span class="n">new_list_of_white_pieces</span> <span class="o">=</span> <span class="n">remove_piece_from_list</span><span class="p">(</span><span class="n">new_list_of_white_pieces</span><span class="p">,</span> <span class="n">foo</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new_list_of_white_pieces</span> <span class="o">=</span> <span class="n">list_of_white_pieces</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="n">_ai_rek</span><span class="p">(</span><span class="n">new_list_of_white_pieces</span><span class="p">,</span> <span class="n">new_list_of_black_pieces</span><span class="p">,</span> <span class="ow">not</span> <span class="n">color_of_active_side</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">depth_limiter</span><span class="p">)</span>
+            <span class="n">min_max_value</span> <span class="o">=</span> <span class="n">max_score</span><span class="p">(</span><span class="n">min_max_value</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">color_of_active_side</span> <span class="o">==</span> <span class="n">Color</span><span class="o">.</span><span class="n">white</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">piece_cords</span><span class="p">,</span> <span class="n">target_pos_cords</span><span class="p">,</span> <span class="n">beaten_piece_cords</span> <span class="ow">in</span> <span class="n">all_possible_moves</span><span class="p">:</span>
+            <span class="n">new_list_of_white_pieces</span> <span class="o">=</span> <span class="n">move_piece_on_list</span><span class="p">(</span><span class="n">list_of_white_pieces</span><span class="p">,</span> <span class="n">piece_cords</span><span class="p">,</span> <span class="n">target_pos_cords</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">beaten_piece_cords</span><span class="p">:</span>
+                <span class="n">new_list_of_black_pieces</span> <span class="o">=</span> <span class="n">remove_piece_from_list</span><span class="p">(</span><span class="n">list_of_black_pieces</span><span class="p">,</span> <span class="n">beaten_piece_cords</span><span class="p">)</span>
+                <span class="n">target_pos_cords</span><span class="p">,</span> <span class="n">list_of_beaten_pieces</span> <span class="o">=</span> <span class="n">_ai_rek_another_attack_in_a_row</span><span class="p">(</span><span class="n">new_list_of_white_pieces</span><span class="p">,</span>
+                                                                                          <span class="n">new_list_of_black_pieces</span><span class="p">,</span>
+                                                                                          <span class="n">color_of_active_side</span><span class="p">,</span>
+                                                                                          <span class="n">target_pos_cords</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">foo</span> <span class="ow">in</span> <span class="n">list_of_beaten_pieces</span><span class="p">:</span>
+                    <span class="n">new_list_of_black_pieces</span> <span class="o">=</span> <span class="n">remove_piece_from_list</span><span class="p">(</span><span class="n">new_list_of_black_pieces</span><span class="p">,</span> <span class="n">foo</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new_list_of_black_pieces</span> <span class="o">=</span> <span class="n">list_of_black_pieces</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="n">_ai_rek</span><span class="p">(</span><span class="n">new_list_of_white_pieces</span><span class="p">,</span> <span class="n">new_list_of_black_pieces</span><span class="p">,</span> <span class="n">Color</span><span class="o">.</span><span class="n">black</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">depth_limiter</span><span class="p">)</span>
+            <span class="n">min_max_value</span> <span class="o">=</span> <span class="n">min_score</span><span class="p">(</span><span class="n">min_max_value</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">min_max_value</span>
+
+
+<span class="k">def</span> <span class="nf">_ai_rek_another_attack_in_a_row</span><span class="p">(</span><span class="n">list_of_white_pieces</span><span class="p">,</span> <span class="n">list_of_black_pieces</span><span class="p">,</span> <span class="n">color_of_active_side</span><span class="p">,</span> <span class="n">cords</span><span class="p">):</span>
+    <span class="n">possible_attacks_moves</span> <span class="o">=</span> <span class="n">possible_attacks</span><span class="p">(</span><span class="n">cords</span><span class="p">,</span> <span class="n">list_of_white_pieces</span><span class="p">,</span> <span class="n">list_of_black_pieces</span><span class="p">)</span>
+    <span class="n">possible_scores</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">target_cords</span><span class="p">,</span> <span class="n">beaten_cords</span> <span class="ow">in</span> <span class="n">possible_attacks_moves</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">color_of_active_side</span> <span class="o">==</span> <span class="n">Color</span><span class="o">.</span><span class="n">black</span><span class="p">:</span>
+            <span class="n">new_list_of_black_pieces</span> <span class="o">=</span> <span class="n">move_piece_on_list</span><span class="p">(</span><span class="n">list_of_black_pieces</span><span class="p">,</span> <span class="n">cords</span><span class="p">,</span> <span class="n">target_cords</span><span class="p">)</span>
+            <span class="n">new_list_of_white_pieces</span> <span class="o">=</span> <span class="n">remove_piece_from_list</span><span class="p">(</span><span class="n">list_of_white_pieces</span><span class="p">,</span> <span class="n">beaten_cords</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_list_of_white_pieces</span> <span class="o">=</span> <span class="n">move_piece_on_list</span><span class="p">(</span><span class="n">list_of_white_pieces</span><span class="p">,</span> <span class="n">cords</span><span class="p">,</span> <span class="n">target_cords</span><span class="p">)</span>
+            <span class="n">new_list_of_black_pieces</span> <span class="o">=</span> <span class="n">remove_piece_from_list</span><span class="p">(</span><span class="n">list_of_black_pieces</span><span class="p">,</span> <span class="n">beaten_cords</span><span class="p">)</span>
+
+        <span class="n">target_cords</span><span class="p">,</span> <span class="n">beaten_piece_cords</span> <span class="o">=</span> <span class="n">_ai_rek_another_attack_in_a_row</span><span class="p">(</span><span class="n">new_list_of_white_pieces</span><span class="p">,</span>
+                                                                           <span class="n">new_list_of_black_pieces</span><span class="p">,</span>
+                                                                           <span class="n">color_of_active_side</span><span class="p">,</span> <span class="n">target_cords</span><span class="p">)</span>
+        <span class="n">ret_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">beaten_cords</span><span class="p">]</span>
+        <span class="n">ret_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">beaten_piece_cords</span><span class="p">)</span>
+        <span class="n">possible_scores</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">target_cords</span><span class="p">,</span> <span class="n">ret_list</span><span class="p">))</span>
+
+    <span class="n">best_score</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">best_score_ret_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">cords</span><span class="p">,</span> <span class="nb">list</span><span class="p">())</span>
+    <span class="k">for</span> <span class="n">cords_of_target_score</span><span class="p">,</span> <span class="n">ret_list_of_score</span> <span class="ow">in</span> <span class="n">possible_scores</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ret_list_of_score</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">best_score</span><span class="p">:</span>
+            <span class="n">best_score_ret_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">cords_of_target_score</span><span class="p">,</span> <span class="n">ret_list_of_score</span><span class="p">)</span>
+            <span class="n">best_score</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ret_list_of_score</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">best_score_ret_data</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">QtDraughts</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Main.html">Main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../connectionWindow.html">connectionWindow module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../game.html">game package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mainButton.html">mainButton module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../network.html">network package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../settings.html">settings module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../settingsWindow.html">settingsWindow module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tools.html">tools module</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  <li><a href="../game.html">game</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, InsoPL.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
