@@ -18,3 +18,10 @@ Welcome to QtDraughts's documentation!
    settings
    settingsWindow
    tools
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
