@@ -44,59 +44,6 @@ class Color:
             raise ValueError(str(color))
 
 
-def cords_list_to_str(list_of_white_pieces: list, list_of_black_pieces: list):
-    """
-    Creates nice looking string to visalize list of cords on the board,
-    usefull for debugging and tests
-
-    :param list list_of_white_pieces: list of cords of white pieces
-    :param list list_of_black_pieces: list of cords of black pieces
-    :return: str_board
-    :rtype: str
-    """
-
-    empty_board = [
-         '+---------------+',
-         '| | | | | | | | |',
-         '|-+-+-+-+-+-+-+-+',
-         '| | | | | | | | |',
-         '|-+-+-+-+-+-+-+-+',
-         '| | | | | | | | |',
-         '|-+-+-+-+-+-+-+-+',
-         '| | | | | | | | |',
-         '|-+-+-+-+-+-+-+-+',
-         '| | | | | | | | |',
-         '|-+-+-+-+-+-+-+-+',
-         '| | | | | | | | |',
-         '|-+-+-+-+-+-+-+-+',
-         '| | | | | | | | |',
-         '|-+-+-+-+-+-+-+-+',
-         '| | | | | | | | |',
-         '+---------------+']
-
-    list_of_pieces = list_of_black_pieces + list_of_white_pieces
-
-    for cord in list_of_pieces:
-        x, y = cord
-
-        y = y*2
-        y = 15-y
-
-        x = x*2
-        x = x+1
-
-        line = empty_board[y]
-        line = list(line)
-
-        if cord in list_of_white_pieces:
-            line[x] = 'w'
-        elif cord in list_of_black_pieces:
-            line[x] = 'b'
-
-        line = "".join(line)
-        empty_board[y] = line
-
-    return '\n'.join(empty_board)
 
 
 def str_to_cords(str_board: str):
@@ -143,7 +90,7 @@ def str_to_cords(str_board: str):
         list_of_black_pieces.extend(remove_letter('b'))
         list_of_white_pieces.extend(remove_letter('w'))
 
-    return list_of_white_pieces, list_of_black_pieces
+    return ListOfPieces(list_of_white_pieces, list_of_black_pieces)
 
 
 class Move:
@@ -164,20 +111,37 @@ class Move:
         self.destroyed = destroyed
 
 
+def new_move(move):
+    """
+    Temporary function helping in transition from old to new Move standard
+    (tuple to class)
+    :return: ListofPieces:
+    """
+    assert isinstance(move, tuple)
+    if move is None:
+        move = (tuple(), tuple(), list())
+    ret_move = Move(*move)  # force change old format to new
+    return ret_move
+
+
 class ListOfPieces:
     """
     New class intended to replace old way of storing info about pieces
     Old way of storing was a tuple two_pieces - (black_pieces, white_pieces)
     where:
-        black_pieces - list of cords of black pieces
         white_pieces - list of cords of white pieces
+        black_pieces - list of cords of black pieces
     """
-    def __init__(self, black_pieces: list, white_pieces: list):
-        assert isinstance(black_pieces, list)
+    def __init__(self, white_pieces: list, black_pieces: list):
         assert isinstance(white_pieces, list)
+        assert isinstance(black_pieces, list)
 
-        self.black_pieces = black_pieces
-        self.white_pieces = white_pieces
+        self.white_pieces = set(white_pieces)
+        self.black_pieces = set(black_pieces)
+
+    def __iter__(self):
+        combined = self.black_pieces | self.white_pieces
+        return iter(combined)
 
     def apply_move(self, move: Move):
         """
@@ -188,16 +152,70 @@ class ListOfPieces:
         """
         if move.cords in self.black_pieces:
             self.black_pieces.remove(move.cords)
-            self.black_pieces.append(move.dest)
+            self.black_pieces.add(move.dest)
         elif move.cords in self.white_pieces:
             self.white_pieces.remove(move.cords)
-            self.white_pieces.append(move.dest)
-        else:
-            raise ValueError
+            self.white_pieces.add(move.dest)
+
         for destroyed_piece in move.destroyed:
             if destroyed_piece in self.white_pieces:
                 self.white_pieces.remove(destroyed_piece)
             elif destroyed_piece in self.black_pieces:
                 self.black_pieces.remove(destroyed_piece)
-            else:
-                raise ValueError
+        return self
+
+    def __len__(self):
+        return len(self.black_pieces)+len(self.white_pieces)
+
+    def __eq__(self, other):
+        if isinstance(other, ListOfPieces):
+            return self.black_pieces == other.black_pieces and self.white_pieces == other.white_pieces
+
+    def cords_list_to_str(self):
+        """
+        Creates nice looking string to visualize pieces on the board,
+        useful for debugging and tests
+
+        :return str: str_board
+        """
+
+        empty_board = [
+            '+---------------+',
+            '| | | | | | | | |',
+            '|-+-+-+-+-+-+-+-+',
+            '| | | | | | | | |',
+            '|-+-+-+-+-+-+-+-+',
+            '| | | | | | | | |',
+            '|-+-+-+-+-+-+-+-+',
+            '| | | | | | | | |',
+            '|-+-+-+-+-+-+-+-+',
+            '| | | | | | | | |',
+            '|-+-+-+-+-+-+-+-+',
+            '| | | | | | | | |',
+            '|-+-+-+-+-+-+-+-+',
+            '| | | | | | | | |',
+            '|-+-+-+-+-+-+-+-+',
+            '| | | | | | | | |',
+            '+---------------+']
+
+        for cord in self:
+            x, y = cord
+
+            y = y * 2
+            y = 15 - y
+
+            x = x * 2
+            x = x + 1
+
+            line = empty_board[y]
+            line = list(line)
+
+            if cord in self.white_pieces:
+                line[x] = 'w'
+            elif cord in self.black_pieces:
+                line[x] = 'b'
+
+            line = "".join(line)
+            empty_board[y] = line
+
+        return empty_board
