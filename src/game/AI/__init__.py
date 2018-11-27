@@ -2,20 +2,35 @@
 
 from .ai_tools import *
 import random
+from tools import *
+
 
 def ai(list_of_white_pieces, list_of_black_pieces, settings):
-
-    all_possible_moves_with_score = list()
-    all_possible_moves = find_all_possible_moves(list_of_white_pieces, list_of_black_pieces, Color.black, settings)
-
-    if not all_possible_moves:
-        return None
-
     if settings.ai_difficulty<4 and settings.ai_difficulty<random.randint(1,4):
+        all_possible_moves = find_all_possible_moves(list_of_white_pieces, list_of_black_pieces, Color.black, settings)
         piece_cords, target_pos_cords, beaten_piece_cords = random.choice(all_possible_moves)
         if beaten_piece_cords == 0:
-            return piece_cords, target_pos_cords, list()
-        return piece_cords, target_pos_cords, [beaten_piece_cords]
+            return [piece_cords, target_pos_cords, list()]
+        return [piece_cords, target_pos_cords, [beaten_piece_cords]]
+    return random.choice(_ai_compute_best_moves(list_of_white_pieces,list_of_black_pieces,settings))
+
+
+def ai_test(list_of_white_pieces, list_of_black_pieces, settings):
+    foo = _ai_compute_best_moves(list(list_of_white_pieces),list(list_of_black_pieces),settings)
+    assert isinstance(foo, list)
+    if len(foo) == 0:
+        return Move(tuple(), tuple(), list())
+    assert len(foo) == 1  # assert test are written in a way that there is only one possible good answer
+    return new_move(foo[0])
+
+
+def _ai_compute_best_moves(list_of_white_pieces, list_of_black_pieces, settings):
+    best_score = -math.inf
+    best_moves = list()
+    all_possible_moves = find_all_possible_moves(list_of_white_pieces, list_of_black_pieces, Color.black, settings)
+
+    if len(all_possible_moves) == 0:
+        return all_possible_moves
 
     for piece_cords, target_pos_cords, beaten_piece_cords in all_possible_moves:
         list_of_beaten_pieces = list()
@@ -32,9 +47,13 @@ def ai(list_of_white_pieces, list_of_black_pieces, settings):
         else:
             new_list_of_white_pieces = list_of_white_pieces
         score = _ai_rek(new_list_of_white_pieces, new_list_of_black_pieces, Color.white, settings, settings.ai_difficulty)
-        all_possible_moves_with_score.append((piece_cords, target_pos_cords, score, list_of_beaten_pieces))
-        # logging.debug("[AI] It's possible to move %s -> %s with score %s", str(piece_cords), str(target_pos_cords), str(list_of_beaten_pieces))
-    return the_best_move(all_possible_moves_with_score)
+        if score > best_score:
+            best_moves = list()
+            best_score = score
+        if score == best_score:
+            best_moves.append((piece_cords, target_pos_cords, list_of_beaten_pieces))
+
+    return best_moves
 
 
 def _ai_rek(list_of_white_pieces, list_of_black_pieces, color_of_active_side, settings, depth_limiter):
