@@ -11,7 +11,7 @@ class TestAi:
 
         tested_board = ListOfPieces([], [])
         asserted_board = ListOfPieces([], [])
-        ai_move = ai_test(tested_board.white_pieces, tested_board.black_pieces, default_settings)
+        ai_move = ai_test(tested_board, default_settings)
         tested_board.apply_move(ai_move)
         assert tested_board == asserted_board
 
@@ -20,13 +20,13 @@ class TestAi:
 
         tested_board = ListOfPieces([], [(2, 0)])
         asserted_board = ListOfPieces([], [(2, 0)])
-        ai_move = ai_test(tested_board.white_pieces, tested_board.black_pieces, default_settings)
+        ai_move = ai_test(tested_board, default_settings)
         tested_board.apply_move(ai_move)
         assert tested_board == asserted_board
 
         tested_board = ListOfPieces([(0, 0), (2, 0)], [(1, 1)])
         asserted_board = ListOfPieces([(0, 0), (2, 0)], [(1, 1)])
-        ai_move = ai_test(tested_board.white_pieces, tested_board.black_pieces, default_settings)
+        ai_move = ai_test(tested_board, default_settings)
         tested_board.apply_move(ai_move)
         assert tested_board == asserted_board
 
@@ -35,13 +35,13 @@ class TestAi:
 
         tested_board = ListOfPieces([], [(7,7)])
         asserted_board = ListOfPieces([], [(6,6)])
-        ai_move = ai_test(tested_board.white_pieces, tested_board.black_pieces, default_settings)
+        ai_move = ai_test(tested_board, default_settings)
         tested_board.apply_move(ai_move)
         assert tested_board == asserted_board
 
         tested_board = ListOfPieces([(0,6)], [(1,7)])
         asserted_board = ListOfPieces([(0,6)], [(2,6)])
-        ai_move = ai_test(tested_board.white_pieces, tested_board.black_pieces, default_settings)
+        ai_move = ai_test(tested_board, default_settings)
         tested_board.apply_move(ai_move)
         assert tested_board == asserted_board
 
@@ -50,13 +50,13 @@ class TestAi:
 
         tested_board = ListOfPieces([(1,1)],[(2,2)])
         asserted_board = ListOfPieces([],[(0,0)])
-        ai_move = ai_test(tested_board.white_pieces, tested_board.black_pieces, default_settings)
+        ai_move = ai_test(tested_board, default_settings)
         tested_board.apply_move(ai_move)
         assert tested_board == asserted_board
 
         tested_board = ListOfPieces([(7,3),(5,3)],[(6,4)])
         asserted_board = ListOfPieces([(7,3)],[(4,2)])
-        ai_move = ai_test(tested_board.white_pieces, tested_board.black_pieces, default_settings)
+        ai_move = ai_test(tested_board, default_settings)
         tested_board.apply_move(ai_move)
         assert tested_board == asserted_board
 
@@ -65,13 +65,13 @@ class TestAi:
 
         tested_board = ListOfPieces([(1,1)],[(3,3)])
         asserted_board = ListOfPieces([(1,1)],[(4,2)])
-        ai_move = ai_test(tested_board.white_pieces, tested_board.black_pieces, default_settings)
+        ai_move = ai_test(tested_board, default_settings)
         tested_board.apply_move(ai_move)
         assert tested_board == asserted_board
 
         tested_board = ListOfPieces([(2,2),(1,1)],[(3,3),(7,7)])
         asserted_board = ListOfPieces([(2,2),(1,1)],[(4,2),(7,7)])
-        ai_move = ai_test(tested_board.white_pieces, tested_board.black_pieces, default_settings)
+        ai_move = ai_test(tested_board, default_settings)
         tested_board.apply_move(ai_move)
         assert tested_board == asserted_board
 
@@ -80,7 +80,7 @@ class TestAi:
 
         tested_board = ListOfPieces([(0,0),(2,2),(4,2)],[(3,3)])
         asserted_board = ListOfPieces([(0,0),(2,2)],[(5,1)])
-        ai_move = ai_test(tested_board.white_pieces, tested_board.black_pieces, default_settings)
+        ai_move = ai_test(tested_board, default_settings)
         tested_board.apply_move(ai_move)
         assert tested_board == asserted_board
 
@@ -89,7 +89,7 @@ class TestAi:
 
         tested_board = ListOfPieces([(1,1),(3,3),(5,3)],[(4,4)])
         asserted_board = ListOfPieces([(5,3)],[(0,0)])
-        ai_move = ai_test(tested_board.white_pieces, tested_board.black_pieces, default_settings)
+        ai_move = ai_test(tested_board, default_settings)
         tested_board.apply_move(ai_move)
         assert tested_board == asserted_board
 
@@ -141,7 +141,7 @@ class TestAi:
 
         tested_board = str_to_cords(tested_board)
         asserted_board = str_to_cords(asserted_board)
-        ai_move = ai_test(tested_board.white_pieces, tested_board.black_pieces, default_settings)
+        ai_move = ai_test(tested_board, default_settings)
         tested_board.apply_move(ai_move)
         assert tested_board == asserted_board
 
@@ -185,7 +185,7 @@ class TestAi:
 
         tested_board = str_to_cords(tested_board)
         asserted_board = str_to_cords(asserted_board)
-        ai_move = ai_test(tested_board.white_pieces, tested_board.black_pieces, default_settings)
+        ai_move = ai_test(tested_board, default_settings)
         tested_board.apply_move(ai_move)
         assert tested_board == asserted_board
 
@@ -229,7 +229,7 @@ class TestAi:
                              +---------------+"""
         tested_board = str_to_cords(tested_board)
         asserted_board = str_to_cords(asserted_board)
-        ai_move = ai_test(tested_board.white_pieces, tested_board.black_pieces, default_settings)
+        ai_move = ai_test(tested_board, default_settings)
         tested_board.apply_move(ai_move)
         assert tested_board == asserted_board
 
@@ -272,6 +272,6 @@ class TestAi:
                              +---------------+"""
         tested_board = str_to_cords(tested_board)
         asserted_board = str_to_cords(asserted_board)
-        ai_move = ai_test(tested_board.white_pieces, tested_board.black_pieces, default_settings)
+        ai_move = ai_test(tested_board, default_settings)
         tested_board.apply_move(ai_move)
         assert tested_board == asserted_board

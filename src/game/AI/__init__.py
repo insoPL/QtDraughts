@@ -15,8 +15,8 @@ def ai(list_of_white_pieces, list_of_black_pieces, settings):
     return random.choice(_ai_compute_best_moves(list_of_white_pieces,list_of_black_pieces,settings))
 
 
-def ai_test(list_of_white_pieces, list_of_black_pieces, settings):
-    foo = _ai_compute_best_moves(list(list_of_white_pieces),list(list_of_black_pieces),settings)
+def ai_test(list_of_pieces, settings):
+    foo = _ai_compute_best_moves(list_of_pieces,settings)
     assert isinstance(foo, list)
     if len(foo) == 0:
         return Move(tuple(), tuple(), list())
@@ -24,7 +24,9 @@ def ai_test(list_of_white_pieces, list_of_black_pieces, settings):
     return new_move(foo[0])
 
 
-def _ai_compute_best_moves(list_of_white_pieces, list_of_black_pieces, settings):
+def _ai_compute_best_moves(list_of_pieces, settings):
+    list_of_white_pieces = list(list_of_pieces.white_pieces)
+    list_of_black_pieces = list(list_of_pieces.black_pieces)
     best_score = -math.inf
     best_moves = list()
     all_possible_moves = find_all_possible_moves(list_of_white_pieces, list_of_black_pieces, Color.black, settings)

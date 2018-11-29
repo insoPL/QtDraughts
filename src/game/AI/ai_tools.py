@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from tools import Color
+from tools import Color, ListOfPieces
 from game.game_logic import possible_moves, possible_attacks
 import random
 import math
@@ -8,12 +8,16 @@ import math
 def find_all_possible_moves(list_of_white_pieces, list_of_black_pieces, color, settings):
     all_possible_moves = list()
 
+    list_of_pieces = ListOfPieces(list_of_white_pieces, list_of_black_pieces)
+
     if color == Color.black:
-        list_of_my_pieces = list_of_black_pieces
+        list_of_my_pieces = list(list_of_pieces.black_pieces)
     elif color == Color.white:
-        list_of_my_pieces = list_of_white_pieces
+        list_of_my_pieces = list(list_of_pieces.white_pieces)
     else:
         raise ValueError("Color: " + str(color))
+    list_of_white_pieces = list(list_of_pieces.white_pieces)
+    list_of_black_pieces = list(list_of_pieces.black_pieces)
 
     for foo in list_of_my_pieces:
         possible_moves_foo = possible_attacks(foo, list_of_white_pieces, list_of_black_pieces)

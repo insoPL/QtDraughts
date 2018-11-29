@@ -158,11 +158,14 @@ class ListOfPieces:
             self.white_pieces.add(move.dest)
 
         for destroyed_piece in move.destroyed:
-            if destroyed_piece in self.white_pieces:
-                self.white_pieces.remove(destroyed_piece)
-            elif destroyed_piece in self.black_pieces:
-                self.black_pieces.remove(destroyed_piece)
+            self.remove_piece(destroyed_piece)
         return self
+
+    def remove_piece(self, cords):
+        if cords in self.white_pieces:
+            self.white_pieces.remove(cords)
+        elif cords in self.black_pieces:
+            self.black_pieces.remove(cords)
 
     def __len__(self):
         return len(self.black_pieces)+len(self.white_pieces)
