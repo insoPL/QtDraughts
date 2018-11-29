@@ -3,7 +3,7 @@ import logging
 
 from PyQt5.QtWidgets import QMessageBox
 
-import game.game_logic
+import game.gameLogic
 from tools import Color
 from .board import Board
 from .pieces import Pieces
@@ -65,7 +65,7 @@ class Game:
     def try_to_make_a_move(self, piece, dest_cords):
         if piece.cords in self.possible_moves:
             if self.try_attack(piece, dest_cords):
-                if self.settings.multiple_attack and game_logic.possible_attacks(piece.cords, *self.pieces.two_lists):
+                if self.settings.multiple_attack and gameLogic.possible_attacks(piece.cords, *self.pieces.two_lists):
                     self.possible_moves = [piece.cords]
                     return
                 self.end_turn()
@@ -73,7 +73,7 @@ class Game:
                 self.end_turn()
 
     def try_move(self, piece, dest_cords):
-        possible_moves = game_logic.possible_moves(piece.cords, *self.pieces.two_lists)
+        possible_moves = gameLogic.possible_moves(piece.cords, *self.pieces.two_lists)
         for possible_dest_cord, possible_destroyed_piece in possible_moves.items():
             if possible_dest_cord == dest_cords:
                 if self.multiplayer:
@@ -83,7 +83,7 @@ class Game:
         return False
 
     def try_attack(self, piece, dest_cords):
-        possible_attacks = game_logic.possible_attacks(piece.cords, *self.pieces.two_lists)
+        possible_attacks = gameLogic.possible_attacks(piece.cords, *self.pieces.two_lists)
         for possible_dest_cord, possible_destroyed_piece in possible_attacks.items():
             if possible_dest_cord == dest_cords:
                 if self.multiplayer:
@@ -137,7 +137,7 @@ class Game:
             return
         piece_cords, target_cords, beaten_cords = self.threadAI.best_move
 
-        logging.debug("[AI]: AI chose to make a move %s -> %s", str(piece_cords), str(target_cords))
+        logging.debug("[ai]: ai chose to make a move %s -> %s", str(piece_cords), str(target_cords))
         piece = self.pieces.get_piece(piece_cords)
         piece.cords = target_cords
         if beaten_cords != 0:
@@ -152,7 +152,7 @@ class Game:
         list_of_pieces_which_can_attack = list()
         for piece in self.pieces:
             if piece.color == self.whoseTurn:
-                possible_attacks = game_logic.possible_attacks(piece.cords, *self.pieces.two_lists)
+                possible_attacks = gameLogic.possible_attacks(piece.cords, *self.pieces.two_lists)
                 if possible_attacks:
                     list_of_pieces_which_can_attack.append(piece.cords)
         return list_of_pieces_which_can_attack
@@ -161,7 +161,7 @@ class Game:
         list_of_pieces_which_can_move = list()
         for piece in self.pieces:
             if self.whoseTurn == piece.color:
-                if game_logic.possible_moves(piece.cords, *self.pieces.two_lists).keys():
+                if gameLogic.possible_moves(piece.cords, *self.pieces.two_lists).keys():
                     list_of_pieces_which_can_move.append(piece.cords)
         return list_of_pieces_which_can_move
 

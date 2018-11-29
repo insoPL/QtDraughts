@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from game.AI import ai_test
-from game.AI import _ai_rek_another_attack_in_a_row
-from tools import *
+from game.ai import ai_test
+from game.ai import _ai_rek_another_attack_in_a_row
 from settings import Settings
-
+from gameLogic.listOfPieces import ListOfPieces, str_to_cords
+from tools import Color
 
 class TestAi:
     def test_no_possible_movement_empty_board(self):

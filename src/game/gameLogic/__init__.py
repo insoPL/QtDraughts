@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 
 def possible_moves(cordy_pionka, cord_list_of_bottom_pieces, cord_list_of_top_pieces):
     return_dict = dict()

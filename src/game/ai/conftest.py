@@ -1,4 +1,4 @@
-from tools import *
+from gameLogic.listOfPieces import ListOfPieces
 
 
 def pytest_assertrepr_compare(config, op, left, right):

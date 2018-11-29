@@ -3,7 +3,7 @@
 from .ai_tools import *
 import random
 from tools import *
-
+from gameLogic.move import Move, new_move
 
 def ai(list_of_white_pieces, list_of_black_pieces, settings):
     if settings.ai_difficulty<4 and settings.ai_difficulty<random.randint(1,4):

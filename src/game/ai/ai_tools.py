@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from tools import Color, ListOfPieces
-from game.game_logic import possible_moves, possible_attacks
+from tools import Color
+from gameLogic import possible_moves, possible_attacks
+from gameLogic.listOfPieces import ListOfPieces
 import random
 import math
 
