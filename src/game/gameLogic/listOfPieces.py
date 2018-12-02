@@ -20,6 +20,12 @@ class ListOfPieces:
         combined = self.black_pieces | self.white_pieces
         return iter(combined)
 
+    def copy(self):
+        return ListOfPieces(*self.two_lists())
+
+    def two_lists(self):
+        return list(self.white_pieces), list(self.black_pieces)
+
     def apply_move(self, move: Move):
         """
         Applies Move to ListOfPieces.
@@ -34,8 +40,7 @@ class ListOfPieces:
             self.white_pieces.remove(move.cords)
             self.white_pieces.add(move.dest)
 
-        for destroyed_piece in move.destroyed:
-            self.remove_piece(destroyed_piece)
+        self.remove_piece(move.destroyed)
         return self
 
     def remove_piece(self, cords):
@@ -50,6 +55,8 @@ class ListOfPieces:
     def __eq__(self, other):
         if isinstance(other, ListOfPieces):
             return self.black_pieces == other.black_pieces and self.white_pieces == other.white_pieces
+        else:
+            raise ValueError
 
     def cords_list_to_str(self):
         """

@@ -7,13 +7,13 @@ class Move:
         dest - destination cords
         destroyed - list of cords of destroyed pieces
     """
-    def __init__(self, cords:tuple, dest:tuple, destroyed:list):
+    def __init__(self, cords: tuple, dest: tuple, destroy: tuple):
         assert isinstance(cords, tuple)
         assert isinstance(dest, tuple)
-        assert isinstance(destroyed, list)
+        assert isinstance(destroy, tuple)
         self.cords = cords
         self.dest = dest
-        self.destroyed = destroyed
+        self.destroyed = destroy
 
 
 def new_move(move):

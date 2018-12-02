@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from game.ai import ai_test
-from game.ai import _ai_rek_another_attack_in_a_row
 from settings import Settings
 from gameLogic.listOfPieces import ListOfPieces, str_to_cords
 from tools import Color
+
 
 class TestAi:
     def test_no_possible_movement_empty_board(self):
@@ -87,18 +87,47 @@ class TestAi:
     def test_multiple_attack(self):
         default_settings = Settings(default=True)
 
-        tested_board = ListOfPieces([(1,1),(3,3),(5,3)],[(4,4)])
-        asserted_board = ListOfPieces([(5,3)],[(0,0)])
+        tested_board = """"  +---------------+
+                             | | | | | | | | |
+                             |-+-+-+-+-+-+-+-+
+                             | | | | | | | | |
+                             |-+-+-+-+-+-+-+-+
+                             | | | | | | | | |
+                             |-+-+-+-+-+-+-+-+
+                             | | | | |b| | | |
+                             |-+-+-+-+-+-+-+-+
+                             | | | |w| |w| | |
+                             |-+-+-+-+-+-+-+-+
+                             | | | | | | | | |
+                             |-+-+-+-+-+-+-+-+
+                             | |w| | | | | | |
+                             |-+-+-+-+-+-+-+-+
+                             | | | | | | | | |
+                             +---------------+"""
+
+        asserted_board = """"+---------------+
+                             | | | | | | | | |
+                             |-+-+-+-+-+-+-+-+
+                             | | | | | | | | |
+                             |-+-+-+-+-+-+-+-+
+                             | | | | | | | | |
+                             |-+-+-+-+-+-+-+-+
+                             | | | | | | | | |
+                             |-+-+-+-+-+-+-+-+
+                             | | | | | |w| | |
+                             |-+-+-+-+-+-+-+-+
+                             | | |b| | | | | |
+                             |-+-+-+-+-+-+-+-+
+                             | |w| | | | | | |
+                             |-+-+-+-+-+-+-+-+
+                             | | | | | | | | |
+                             +---------------+"""
+
+        tested_board = str_to_cords(tested_board)
+        asserted_board = str_to_cords(asserted_board)
         ai_move = ai_test(tested_board, default_settings)
         tested_board.apply_move(ai_move)
         assert tested_board == asserted_board
-
-    def test_multiple_attack_recursive_function(self):
-        wynik = _ai_rek_another_attack_in_a_row([(1, 1), (3, 3)], [(4, 4)], Color.black, (4, 4))
-        assert wynik == ((0,0),[(3,3),(1,1)])
-
-        wynik = _ai_rek_another_attack_in_a_row([(1, 1), (3, 3), (5, 3)], [(4, 4)], Color.black, (4, 4))
-        assert wynik == ((0,0),[(3,3),(1,1)])
 
     def test_setting_force_attack(self):
         default_settings = Settings(default=True)
@@ -203,7 +232,7 @@ class TestAi:
                              |-+-+-+-+-+-+-+-+
                              | | | |w| |w| | |
                              |-+-+-+-+-+-+-+-+
-                             | | | | | | |w| |
+                             | | | | | | | | |
                              |-+-+-+-+-+-+-+-+
                              | |w| | | | | | |
                              |-+-+-+-+-+-+-+-+
@@ -221,11 +250,11 @@ class TestAi:
                              |-+-+-+-+-+-+-+-+
                              | | | | | |w| | |
                              |-+-+-+-+-+-+-+-+
-                             | | | | | | |w| |
+                             | | |b| | | | | |
                              |-+-+-+-+-+-+-+-+
-                             | | | | | | | | |
+                             | |w| | | | | | |
                              |-+-+-+-+-+-+-+-+
-                             |b| | | | | | | |
+                             || | | | | | | |
                              +---------------+"""
         tested_board = str_to_cords(tested_board)
         asserted_board = str_to_cords(asserted_board)
