@@ -2,7 +2,6 @@
 from game.ai import ai_test
 from settings import Settings
 from gameLogic.listOfPieces import ListOfPieces, str_to_cords
-from tools import Color
 
 
 class TestAi:
@@ -18,14 +17,17 @@ class TestAi:
     def test_no_possible_movement_end_of_board(self):
         default_settings = Settings(default=True)
 
-        tested_board = ListOfPieces([], [(2, 0)])
-        asserted_board = ListOfPieces([], [(2, 0)])
+        tested_board = ListOfPieces([(2, 0)], [])
+        asserted_board = ListOfPieces([(2, 0)], [])
         ai_move = ai_test(tested_board, default_settings)
         tested_board.apply_move(ai_move)
         assert tested_board == asserted_board
 
-        tested_board = ListOfPieces([(0, 0), (2, 0)], [(1, 1)])
-        asserted_board = ListOfPieces([(0, 0), (2, 0)], [(1, 1)])
+    def test_no_possible_movement_path_blocked(self):
+        default_settings = Settings(default=True)
+
+        tested_board = ListOfPieces([(1, 1)],[(0, 0), (2, 0)])
+        asserted_board = ListOfPieces([(1, 1)],[(0, 0), (2, 0)])
         ai_move = ai_test(tested_board, default_settings)
         tested_board.apply_move(ai_move)
         assert tested_board == asserted_board
@@ -33,44 +35,49 @@ class TestAi:
     def test_simple_move(self):
         default_settings = Settings(default=True)
 
-        tested_board = ListOfPieces([], [(7,7)])
-        asserted_board = ListOfPieces([], [(6,6)])
+        tested_board = ListOfPieces([(7,7)], [])
+        asserted_board = ListOfPieces([(6,6)], [])
         ai_move = ai_test(tested_board, default_settings)
         tested_board.apply_move(ai_move)
         assert tested_board == asserted_board
 
-        tested_board = ListOfPieces([(0,6)], [(1,7)])
-        asserted_board = ListOfPieces([(0,6)], [(2,6)])
+        tested_board = ListOfPieces([(1,7)], [(0,6)])
+        asserted_board = ListOfPieces([(2,6)], [(0,6)])
         ai_move = ai_test(tested_board, default_settings)
         tested_board.apply_move(ai_move)
         assert tested_board == asserted_board
 
-    def test_simple_attack_move(self):
+    def test_simple_attack_move1(self):
         default_settings = Settings(default=True)
 
-        tested_board = ListOfPieces([(1,1)],[(2,2)])
-        asserted_board = ListOfPieces([],[(0,0)])
+        tested_board = ListOfPieces([(2,2)],[(1,1)])
+        asserted_board = ListOfPieces([(0,0)],[])
         ai_move = ai_test(tested_board, default_settings)
         tested_board.apply_move(ai_move)
         assert tested_board == asserted_board
 
-        tested_board = ListOfPieces([(7,3),(5,3)],[(6,4)])
-        asserted_board = ListOfPieces([(7,3)],[(4,2)])
-        ai_move = ai_test(tested_board, default_settings)
-        tested_board.apply_move(ai_move)
-        assert tested_board == asserted_board
-
-    def test_not_making_losing_moves(self):
+    def test_simple_attack_move2(self):
         default_settings = Settings(default=True)
 
-        tested_board = ListOfPieces([(1,1)],[(3,3)])
-        asserted_board = ListOfPieces([(1,1)],[(4,2)])
+        tested_board = ListOfPieces([(6,4)],[(7,3),(5,3)])
+        asserted_board = ListOfPieces([(4,2)],[(7,3)])
         ai_move = ai_test(tested_board, default_settings)
         tested_board.apply_move(ai_move)
         assert tested_board == asserted_board
 
-        tested_board = ListOfPieces([(2,2),(1,1)],[(3,3),(7,7)])
-        asserted_board = ListOfPieces([(2,2),(1,1)],[(4,2),(7,7)])
+    def test_not_making_losing_moves_1(self):
+        default_settings = Settings(default=True)
+
+        tested_board = ListOfPieces([(3,3)],[(1,1)])
+        asserted_board = ListOfPieces([(4,2)],[(1,1)])
+        ai_move = ai_test(tested_board, default_settings)
+        tested_board.apply_move(ai_move)
+        assert tested_board == asserted_board
+
+    def test_not_making_losing_moves_2(self):
+        default_settings = Settings(default=True)
+        tested_board = ListOfPieces([(3,3),(7,7)],[(2,2),(1,1)])
+        asserted_board = ListOfPieces([(4,2),(7,7)],[(2,2),(1,1)])
         ai_move = ai_test(tested_board, default_settings)
         tested_board.apply_move(ai_move)
         assert tested_board == asserted_board
@@ -78,8 +85,8 @@ class TestAi:
     def test_guessing_enemy_moves(self):
         default_settings = Settings(default=True)
 
-        tested_board = ListOfPieces([(0,0),(2,2),(4,2)],[(3,3)])
-        asserted_board = ListOfPieces([(0,0),(2,2)],[(5,1)])
+        tested_board = ListOfPieces([(3,3)],[(0,0),(2,2),(4,2)])
+        asserted_board = ListOfPieces([(5,1)],[(0,0),(2,2)])
         ai_move = ai_test(tested_board, default_settings)
         tested_board.apply_move(ai_move)
         assert tested_board == asserted_board
@@ -94,13 +101,13 @@ class TestAi:
                              |-+-+-+-+-+-+-+-+
                              | | | | | | | | |
                              |-+-+-+-+-+-+-+-+
-                             | | | | |b| | | |
+                             | | | | |w| | | |
                              |-+-+-+-+-+-+-+-+
-                             | | | |w| |w| | |
+                             | | | |b| |b| | |
                              |-+-+-+-+-+-+-+-+
                              | | | | | | | | |
                              |-+-+-+-+-+-+-+-+
-                             | |w| | | | | | |
+                             | |b| | | | | | |
                              |-+-+-+-+-+-+-+-+
                              | | | | | | | | |
                              +---------------+"""
@@ -114,11 +121,11 @@ class TestAi:
                              |-+-+-+-+-+-+-+-+
                              | | | | | | | | |
                              |-+-+-+-+-+-+-+-+
-                             | | | | | |w| | |
+                             | | | | | |b| | |
                              |-+-+-+-+-+-+-+-+
-                             | | |b| | | | | |
+                             | | |w| | | | | |
                              |-+-+-+-+-+-+-+-+
-                             | |w| | | | | | |
+                             | |b| | | | | | |
                              |-+-+-+-+-+-+-+-+
                              | | | | | | | | |
                              +---------------+"""
@@ -141,13 +148,13 @@ class TestAi:
                              |-+-+-+-+-+-+-+-+
                              | | | | | | | | |
                              |-+-+-+-+-+-+-+-+
-                             | |w| |b| | | | |
+                             | |b| |w| | | | |
                              |-+-+-+-+-+-+-+-+
-                             | | |w| | | | | |
+                             | | |b| | | | | |
                              |-+-+-+-+-+-+-+-+
-                             | | | |b| |b| | |
+                             | | | |w| |w| | |
                              |-+-+-+-+-+-+-+-+
-                             |w| |w| | | | | |
+                             |b| |b| | | | | |
                              +---------------+"""
 
         asserted_board = """"+---------------+
@@ -159,13 +166,13 @@ class TestAi:
                              |-+-+-+-+-+-+-+-+
                              | | | | | | | | |
                              |-+-+-+-+-+-+-+-+
-                             | |w| | | | | | |
+                             | |b| | | | | | |
                              |-+-+-+-+-+-+-+-+
                              | | | | | | | | |
                              |-+-+-+-+-+-+-+-+
-                             | |b| |b| |b| | |
+                             | |w| |w| |w| | |
                              |-+-+-+-+-+-+-+-+
-                             |w| |w| | | | | |
+                             |b| |b| | | | | |
                              +---------------+"""
 
         tested_board = str_to_cords(tested_board)
@@ -185,13 +192,13 @@ class TestAi:
                              |-+-+-+-+-+-+-+-+
                              | | | | | | | | |
                              |-+-+-+-+-+-+-+-+
-                             | |w| |b| | | | |
+                             | |b| |w| | | | |
                              |-+-+-+-+-+-+-+-+
-                             | | |w| | | | | |
+                             | | |b| | | | | |
                              |-+-+-+-+-+-+-+-+
-                             | | | |b| |b| | |
+                             | | | |w| |w| | |
                              |-+-+-+-+-+-+-+-+
-                             |w| |w| | | | | |
+                             |b| |b| | | | | |
                              +---------------+"""
 
         asserted_board = """"+---------------+
@@ -203,13 +210,13 @@ class TestAi:
                              |-+-+-+-+-+-+-+-+
                              | | | | | | | | |
                              |-+-+-+-+-+-+-+-+
-                             | |w| |b| | | | |
+                             | |b| |w| | | | |
                              |-+-+-+-+-+-+-+-+
-                             | | |w| | | | | |
+                             | | |b| | | | | |
                              |-+-+-+-+-+-+-+-+
-                             | | | | | |b| | |
+                             | | | | | |w| | |
                              |-+-+-+-+-+-+-+-+
-                             |w| |w| |b| | | |
+                             |b| |b| |w| | | |
                              +---------------+"""
 
         tested_board = str_to_cords(tested_board)
@@ -228,13 +235,13 @@ class TestAi:
                              |-+-+-+-+-+-+-+-+
                              | | | | | | | | |
                              |-+-+-+-+-+-+-+-+
-                             | | | | |b| | | |
+                             | | | | |w| | | |
                              |-+-+-+-+-+-+-+-+
-                             | | | |w| |w| | |
+                             | | | |b| |b| | |
                              |-+-+-+-+-+-+-+-+
                              | | | | | | | | |
                              |-+-+-+-+-+-+-+-+
-                             | |w| | | | | | |
+                             | |b| | | | | | |
                              |-+-+-+-+-+-+-+-+
                              | | | | | | | | |
                              +---------------+"""
@@ -248,11 +255,11 @@ class TestAi:
                              |-+-+-+-+-+-+-+-+
                              | | | | | | | | |
                              |-+-+-+-+-+-+-+-+
-                             | | | | | |w| | |
+                             | | | | | |b| | |
                              |-+-+-+-+-+-+-+-+
-                             | | |b| | | | | |
+                             | | |w| | | | | |
                              |-+-+-+-+-+-+-+-+
-                             | |w| | | | | | |
+                             | |b| | | | | | |
                              |-+-+-+-+-+-+-+-+
                              || | | | | | | |
                              +---------------+"""
@@ -271,13 +278,13 @@ class TestAi:
                              |-+-+-+-+-+-+-+-+
                              | | | | | | | | |
                              |-+-+-+-+-+-+-+-+
-                             | | | | |b| | | |
+                             | | | | |w| | | |
                              |-+-+-+-+-+-+-+-+
-                             | | | |w| |w| | |
+                             | | | |b| |b| | |
                              |-+-+-+-+-+-+-+-+
-                             | | | | | | |w| |
+                             | | | | | | |b| |
                              |-+-+-+-+-+-+-+-+
-                             | |w| | | | | | |
+                             | |b| | | | | | |
                              |-+-+-+-+-+-+-+-+
                              | | | | | | | | |
                              +---------------+"""
@@ -291,11 +298,11 @@ class TestAi:
                              |-+-+-+-+-+-+-+-+
                              | | | | | | | | |
                              |-+-+-+-+-+-+-+-+
-                             | | | | | |w| | |
+                             | | | | | |b| | |
                              |-+-+-+-+-+-+-+-+
-                             | | |b| | | |w| |
+                             | | |w| | | |b| |
                              |-+-+-+-+-+-+-+-+
-                             | |w| | | | | | |
+                             | |b| | | | | | |
                              |-+-+-+-+-+-+-+-+
                              | | | | | | | | |
                              +---------------+"""

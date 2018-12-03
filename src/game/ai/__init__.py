@@ -9,14 +9,11 @@ from gameLogic.gameLogic import find_all_possible_moves, possible_attacks
 import math
 
 
-def ai(list_of_white_pieces, list_of_black_pieces, settings):
+def ai(list_of_pieces, settings):
     if settings.ai_difficulty<4 and settings.ai_difficulty<random.randint(1,4):
-        all_possible_moves = find_all_possible_moves(list_of_white_pieces, list_of_black_pieces, Color.black, settings)
-        piece_cords, target_pos_cords, beaten_piece_cords = random.choice(all_possible_moves)
-        if beaten_piece_cords == 0:
-            return [piece_cords, target_pos_cords, list()]
-        return [piece_cords, target_pos_cords, [beaten_piece_cords]]
-    best_moves = _ai_compute_best_moves(list_of_white_pieces,list_of_black_pieces,settings)
+        all_possible_moves = find_all_possible_moves(list_of_pieces, Color.white, settings)
+        return random.choice(all_possible_moves)
+    best_moves = _ai_compute_best_moves(list_of_pieces,settings)
     return random.choice(best_moves)
 
 
@@ -32,16 +29,16 @@ def ai_test(list_of_pieces, settings):
 def _ai_compute_best_moves(list_of_pieces, settings):
     best_score = -math.inf
     best_moves = list()
-    all_possible_moves = find_all_possible_moves(list_of_pieces, Color.black, settings)
+    all_possible_moves = find_all_possible_moves(list_of_pieces, Color.white, settings)
 
     for move in all_possible_moves:
         copy_list_of_pieces = list_of_pieces.copy()
         copy_list_of_pieces.apply_move(move)
 
         if settings.multiple_attack and move.destroyed and possible_attacks(move.dest, copy_list_of_pieces):
-            score = _ai_rek(copy_list_of_pieces, Color.black, settings, settings.ai_difficulty)
-        else:
             score = _ai_rek(copy_list_of_pieces, Color.white, settings, settings.ai_difficulty)
+        else:
+            score = _ai_rek(copy_list_of_pieces, Color.black, settings, settings.ai_difficulty)
 
         if score > best_score:
             best_moves = list()
@@ -57,13 +54,13 @@ def _ai_compute_best_moves(list_of_pieces, settings):
 def _ai_rek(list_of_pieces: ListOfPieces, color_of_active_side, settings, depth_limiter):
     min_max_value = None
     if depth_limiter == 0:
-        return len(list_of_pieces.black_pieces) - len(list_of_pieces.white_pieces)
+        return len(list_of_pieces.white_pieces) - len(list_of_pieces.black_pieces)
     depth_limiter -= 1
 
     all_possible_moves = find_all_possible_moves(list_of_pieces, color_of_active_side, settings)
 
     if not all_possible_moves:
-        return len(list_of_pieces.black_pieces) - len(list_of_pieces.white_pieces)
+        return len(list_of_pieces.white_pieces) - len(list_of_pieces.black_pieces)
 
     for move in all_possible_moves:
         copy_list_of_pieces = list_of_pieces.copy()
@@ -73,7 +70,7 @@ def _ai_rek(list_of_pieces: ListOfPieces, color_of_active_side, settings, depth_
         else:
             score = _ai_rek(copy_list_of_pieces, not color_of_active_side, settings, depth_limiter)
 
-        if color_of_active_side == Color.white:
+        if color_of_active_side == Color.black:
             min_max_value = custom_min(min_max_value, score)
         else:
             min_max_value = custom_max(min_max_value, score)
