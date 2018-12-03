@@ -51,7 +51,7 @@ class DrawPiece(QFrame):
 
     def mousePressEvent(self, e):
         logging.debug("click")
-        if self.cords in self.game.possible_moves:
+        if self.cords in [move.cords for move in self.game.possible_moves]:
             self.offset = e.pos()
             self.dragging = True
 
@@ -67,7 +67,7 @@ class DrawPiece(QFrame):
                 self.paintEvent(None)
                 return
             logging.debug("Trying to place " + str(self.cords) + " pieces on " + str(dest_cords))
-            self.game.try_to_make_a_move(self, dest_cords)
+            self.game.try_to_make_a_move(self.cords, dest_cords)
             self.paintEvent(None)
 
     def mouseMoveEvent(self, e):

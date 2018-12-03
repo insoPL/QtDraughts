@@ -9,16 +9,16 @@ from gameLogic.gameLogic import find_all_possible_moves, possible_attacks
 import math
 
 
-def ai(list_of_pieces, settings):
+def ai(list_of_pieces, settings, force_move):
     if settings.ai_difficulty<4 and settings.ai_difficulty<random.randint(1,4):
         all_possible_moves = find_all_possible_moves(list_of_pieces, Color.white, settings)
         return random.choice(all_possible_moves)
-    best_moves = _ai_compute_best_moves(list_of_pieces,settings)
+    best_moves = _ai_compute_best_moves(list_of_pieces,settings, force_move)
     return random.choice(best_moves)
 
 
 def ai_test(list_of_pieces, settings):
-    foo = _ai_compute_best_moves(list_of_pieces,settings)
+    foo = _ai_compute_best_moves(list_of_pieces, settings, None)
     assert isinstance(foo, list)
     if len(foo) == 1:  # assert test are written in a way that there is only one possible good answer
         return foo[0]
@@ -26,10 +26,13 @@ def ai_test(list_of_pieces, settings):
         raise ValueError
 
 
-def _ai_compute_best_moves(list_of_pieces, settings):
+def _ai_compute_best_moves(list_of_pieces, settings, force_move):
     best_score = -math.inf
     best_moves = list()
     all_possible_moves = find_all_possible_moves(list_of_pieces, Color.white, settings)
+
+    if force_move is not None:
+        all_possible_moves = [foo for foo in all_possible_moves if foo.cords == force_move]
 
     for move in all_possible_moves:
         copy_list_of_pieces = list_of_pieces.copy()

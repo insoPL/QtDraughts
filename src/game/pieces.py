@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from game.drawPiece import DrawPiece
-from tools import *
+from tools import Color
+from game.gameLogic.listOfPieces import ListOfPieces
+from game.gameLogic.move import Move
 import logging
 
 
@@ -32,6 +34,8 @@ class Pieces:
         self._pieces_list.append(DrawPiece(self.game, cords, color))
 
     def remove_piece(self, cords):
+        if cords is tuple():
+            return
         piece = self.get_piece(cords)
         self._pieces_list.remove(piece)
         piece.setParent(None)
@@ -44,6 +48,11 @@ class Pieces:
                 return foo
         raise ValueError
 
+    def apply_move(self, move):
+        piece = self.get_piece(move.cords)
+        piece.cords = move.dest
+        self.remove_piece(move.destroyed)
+
     @property
     def two_lists(self) -> (list, list):
         """:return two lists of cords of pieces. First list is list of pieces on top of the board"""
@@ -54,4 +63,16 @@ class Pieces:
                 black.append(foo.cords)
             if foo.color == Color.white:
                 white.append(foo.cords)
-        return black, white
+        return white, black
+
+    @property
+    def list_of_pieces(self) -> ListOfPieces:
+        """:return two lists of cords of pieces. First list is list of pieces on top of the board"""
+        white = list()
+        black = list()
+        for foo in self._pieces_list:
+            if foo.color == Color.black:
+                black.append(foo.cords)
+            if foo.color == Color.white:
+                white.append(foo.cords)
+        return ListOfPieces(white,black)
