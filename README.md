@@ -2,11 +2,15 @@
 
 Small program created as a student project back in uni. It implements MinMax algorithm used by ai opponent and uses python sockets for networking (multiplayer).
 Documentation is generated in Sphinx, you can check it out [here](https://insopl.github.io/QtDraughts/html/index.html)
+
+![Screen](https://raw.githubusercontent.com/insoPL/QtDraughts/master/screenshots/Multiplayer.PNG)
+![Screen](https://raw.githubusercontent.com/insoPL/QtDraughts/master/screenshots/gameplay.PNG)
+
 ## Dependencies
 
 For program to compile you need following libraries:
 * [PyQt5](https://www.riverbankcomputing.com/software/pyqt) - Gui and QtThread for multi threaded operations.
-* [Pynacl](https://github.com/jedisct1/libsodium/) - Cryptography for network communication ]
+* [Pynacl](https://github.com/jedisct1/libsodium/) - Cryptography for network communication.
 
 ## Creating single executable file
 
